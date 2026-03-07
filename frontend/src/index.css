@@ -1,0 +1,273 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --gold: #CFA052;
+  --gold-light: #D9B06A;
+  --gold-dark: #B8883A;
+  --gold-gradient: linear-gradient(135deg, #CFA052 0%, #E8C97A 50%, #CFA052 100%);
+  --cream: #FAFAFA;
+  --cream-dark: #F0EBE3;
+  --white: #FFFFFF;
+  --dark-footer: #0F0E0C;
+  --charcoal: #1A1A1A;
+  --gray-mid: #6B7280;
+  --gray-light: #9CA3AF;
+  --gray-bg: #F5F5F5;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.14);
+  --shadow-gold: 0 4px 20px rgba(207, 160, 82, 0.35);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cream);
+  color: var(--charcoal);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-light);
+  border-radius: 3px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+img {
+  display: block;
+}
+
+/* Gold button base */
+.btn-gold {
+  background: var(--gold-gradient);
+  background-size: 200% auto;
+  color: #fff;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-gold);
+  letter-spacing: 0.5px;
+}
+
+.btn-gold:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(207, 160, 82, 0.5);
+}
+
+/* Marquee */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.7s ease both;
+}
+
+.fade-in-left {
+  animation: fadeInLeft 0.7s ease both;
+}
+
+.fade-in-right {
+  animation: fadeInRight 0.7s ease both;
+}
+
+.delay-1 {
+  animation-delay: 0.15s;
+}
+
+.delay-2 {
+  animation-delay: 0.3s;
+}
+
+.delay-3 {
+  animation-delay: 0.45s;
+}
+
+.delay-4 {
+  animation-delay: 0.6s;
+}
+
+/* Toastify */
+.Toastify__toast {
+  border-radius: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.Toastify__progress-bar {
+  background: var(--gold) !important;
+}
+
+/* Light Theme Testimonial Card */
+.light-testimonial-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  isolation: isolate;
+  cursor: pointer;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(207, 160, 82, 0.1);
+}
+
+.light-testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  /* The elegant top golden gradient line from the image */
+  background: linear-gradient(90deg, transparent 0%, rgba(207, 160, 82, 0.6) 50%, transparent 100%);
+  opacity: 0.8;
+  transition: opacity 0.5s, height 0.3s;
+}
+
+.light-testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08), 0 0 20px rgba(207, 160, 82, 0.08);
+}
+
+.light-testimonial-card:hover::before {
+  opacity: 1;
+  background: linear-gradient(90deg, rgba(207, 160, 82, 0.2) 0%, #CFA052 50%, rgba(207, 160, 82, 0.2) 100%);
+}
+
+/* Marquee Testimonials */
+@keyframes marquee-testimonials {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-testimonials-track {
+  display: flex;
+  gap: 28px;
+  width: max-content;
+  animation: marquee-testimonials 40s linear infinite;
+}
+
+.marquee-testimonials-container {
+  overflow: hidden;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 20px 0 50px;
+}
+
+.marquee-testimonials-container:hover .marquee-testimonials-track {
+  animation-play-state: paused;
+}
+
+.testimonial-item {
+  width: 400px;
+  flex-shrink: 0;
+}

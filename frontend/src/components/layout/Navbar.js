@@ -1,0 +1,204 @@
+// Navbar.js uses Tailwind classes for responsive layout, incorporating a hamburger menu for mobile.
+
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../slices/authSlice';
+import { resetCart } from '../../slices/cartSlice';
+import { resetWishlist } from '../../slices/wishlistSlice';
+import { toast } from 'react-toastify';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
+import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
+
+export default function Navbar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector((s) => s.auth);
+  const { items: cartItems } = useSelector((s) => s.cart);
+  const { items: wishItems } = useSelector((s) => s.wishlist);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Filter items to ensure product actually exists, avoiding counting deleted products
+  const validCartItems = cartItems.filter(i => i.product);
+  const cartCount = validCartItems.reduce((s, i) => s + i.qty, 0);
+  const wishCount = wishItems.filter(i => i._id).length;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    dispatch(logout()); dispatch(resetCart()); dispatch(resetWishlist());
+    toast.info('Logged out.'); navigate('/');
+    setMobileOpen(false);
+  };
+
+  return (
+    <>
+      <nav className={`fixed top-0 left-0 right-0 z-[1000] h-[70px] transition-all duration-300 flex items-center justify-between px-6 md:px-12 ${scrolled ? 'bg-[#FAFAFA]/95 backdrop-blur-md border-b border-gold/20 shadow-sm' : 'bg-[#FAFAFA]/95 backdrop-blur-md border-b border-gold/10'}`}>
+
+        {/* LOGO */}
+        <Link to="/" className="flex items-center gap-2 no-underline z-[1001]">
+          <DiamondOutlinedIcon sx={{ color: '#CFA052', fontSize: 22 }} />
+          <span className="font-playfair text-xl font-bold text-charcoal tracking-tight">
+            Aurelia <span className="text-gold">Luxe</span>
+          </span>
+        </Link>
+
+        {/* MOBILE MENU TOGGLE */}
+        <button
+          className="md:hidden text-charcoal z-[1001] p-1.5 rounded-lg hover:bg-gold/10 transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
+
+        {/* DESKTOP CENTER LINKS */}
+        <div className="hidden md:flex gap-9">
+          {[['/', 'Home'], ['/shop', 'Collection'], ['/about', 'About']].map(([path, label]) => (
+            <Link key={path} to={path} className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors ${location.pathname === path ? 'text-gold border-b-[1.5px] border-gold pb-0.5' : 'text-charcoal border-b-[1.5px] border-transparent pb-0.5 hover:text-gold'}`}>
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        {/* DESKTOP RIGHT ACTIONS */}
+        <div className="hidden md:flex items-center gap-2">
+          {user ? (
+            <>
+              {/* Wishlist */}
+              <Link to="/wishlist" className="relative text-gray-500 hover:text-gold transition-colors p-2 rounded-lg" title="Wishlist">
+                {wishCount > 0 ? <FavoriteIcon sx={{ fontSize: 22, color: '#CFA052' }} /> : <FavoriteBorderIcon sx={{ fontSize: 22 }} />}
+                {wishCount > 0 && <span className="absolute top-0 right-0 bg-gold text-white text-[0.6rem] font-bold w-4 h-4 rounded-full flex items-center justify-center border-[1.5px] border-white">{wishCount}</span>}
+              </Link>
+              {/* Cart */}
+              <Link to="/cart" className="relative text-gray-500 hover:text-gold transition-colors p-2 rounded-lg" title="Cart">
+                <ShoppingCartOutlinedIcon sx={{ fontSize: 22 }} />
+                {cartCount > 0 && <span className="absolute top-0 right-0 bg-charcoal text-white text-[0.6rem] font-bold w-4 h-4 rounded-full flex items-center justify-center border-[1.5px] border-white">{cartCount}</span>}
+              </Link>
+              {/* Orders */}
+              <Link to="/orders" className="text-gray-500 hover:text-gold transition-colors p-2 rounded-lg" title="My Orders">
+                <LocalMallOutlinedIcon sx={{ fontSize: 22 }} />
+              </Link>
+              {/* Profile */}
+              <Link to="/profile" className="text-gray-500 hover:text-gold transition-colors p-2 rounded-lg" title="Profile">
+                <PersonOutlineIcon sx={{ fontSize: 22 }} />
+              </Link>
+              {/* Admin */}
+              {user.role === 'admin' && (
+                <Link to="/admin" className="text-gray-500 hover:text-gold transition-colors p-2 rounded-lg" title="Admin">
+                  <SettingsOutlinedIcon sx={{ fontSize: 22 }} />
+                </Link>
+              )}
+              {/* Logout */}
+              <button onClick={handleLogout} className="flex items-center gap-1.5 text-gray-500 px-3 py-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-br hover:from-gold hover:to-[#E8C97A] hover:text-white hover:-translate-y-0.5 hover:shadow-md">
+                <LogoutIcon sx={{ fontSize: 18 }} />
+                <span className="text-[0.82rem] font-semibold">Logout</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="font-inter text-[0.88rem] font-semibold text-charcoal px-4 py-2 hover:text-gold transition-colors">Login</Link>
+              <Link to="/register" className="bg-gold text-white font-inter text-[0.88rem] font-semibold px-5 py-2 rounded-lg transition-all duration-200 shadow-[0_3px_12px_rgba(207,160,82,0.3)] hover:bg-[#b8883a]">Register</Link>
+            </>
+          )}
+        </div>
+      </nav>
+
+      {/* MOBILE OVERLAY MENU — outside <nav> so it's not clipped */}
+      <div className={`fixed inset-0 bg-white z-[999] flex flex-col pt-[70px] md:hidden transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex flex-col px-6 pt-8 pb-6 overflow-y-auto h-full">
+          {/* Nav Links */}
+          <div className="flex flex-col gap-1 mb-8">
+            {[['/', 'Home'], ['/shop', 'Collection'], ['/about', 'About']].map(([path, label]) => (
+              <Link
+                key={path}
+                to={path}
+                onClick={() => setMobileOpen(false)}
+                className={`font-playfair text-2xl font-semibold py-3 border-b border-gray-100 transition-colors ${location.pathname === path ? 'text-gold' : 'text-charcoal hover:text-gold'}`}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+
+          {/* User Actions */}
+          <div className="flex flex-col gap-3">
+            {user ? (
+              <>
+                {/* User info */}
+                <div className="flex items-center gap-3 pb-4 mb-2 border-b border-gray-100">
+                  <div className="w-10 h-10 rounded-full bg-[#f5ede0] flex items-center justify-center font-playfair font-bold text-gold text-lg">
+                    {user.name?.[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-charcoal text-sm">{user.name}</div>
+                    <div className="text-xs text-gray-400">{user.email}</div>
+                  </div>
+                </div>
+
+                <Link to="/wishlist" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-charcoal font-inter py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <FavoriteBorderIcon sx={{ fontSize: 20, color: '#CFA052' }} />
+                  <span className="font-medium">Wishlist</span>
+                  {wishCount > 0 && <span className="ml-auto bg-gold text-white text-xs font-bold px-2 py-0.5 rounded-full">{wishCount}</span>}
+                </Link>
+                <Link to="/cart" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-charcoal font-inter py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <ShoppingCartOutlinedIcon sx={{ fontSize: 20, color: '#CFA052' }} />
+                  <span className="font-medium">Cart</span>
+                  {cartCount > 0 && <span className="ml-auto bg-charcoal text-white text-xs font-bold px-2 py-0.5 rounded-full">{cartCount}</span>}
+                </Link>
+                <Link to="/orders" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-charcoal font-inter py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <LocalMallOutlinedIcon sx={{ fontSize: 20, color: '#CFA052' }} />
+                  <span className="font-medium">My Orders</span>
+                </Link>
+                <Link to="/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-charcoal font-inter py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <PersonOutlineIcon sx={{ fontSize: 20, color: '#CFA052' }} />
+                  <span className="font-medium">Profile</span>
+                </Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-charcoal font-inter py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors">
+                    <SettingsOutlinedIcon sx={{ fontSize: 20, color: '#CFA052' }} />
+                    <span className="font-medium">Admin Dashboard</span>
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 text-red-500 font-inter py-2.5 px-3 rounded-xl hover:bg-red-50 transition-colors mt-2 w-full text-left"
+                >
+                  <LogoutIcon sx={{ fontSize: 20 }} />
+                  <span className="font-medium">Logout</span>
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-col gap-3 mt-2">
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="w-full text-center border-2 border-charcoal text-charcoal py-3.5 rounded-xl font-semibold text-base transition-all hover:border-gold hover:text-gold">Login</Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)} className="w-full text-center bg-gold text-white py-3.5 rounded-xl font-semibold text-base shadow-[0_3px_12px_rgba(207,160,82,0.3)] hover:bg-[#b8883a] transition-all">Register</Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Spacer */}
+      <div className="h-[70px]" />
+    </>
+  );
+}
