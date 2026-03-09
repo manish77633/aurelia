@@ -71,13 +71,100 @@ export default function Navbar() {
           {mobileOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
 
-        {/* DESKTOP CENTER LINKS */}
-        <div className="hidden md:flex gap-9">
-          {[['/', 'Home'], ['/shop', 'Collection'], ['/about', 'About']].map(([path, label]) => (
-            <Link key={path} to={path} className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors ${location.pathname === path ? 'text-gold border-b-[1.5px] border-gold pb-0.5' : 'text-charcoal border-b-[1.5px] border-transparent pb-0.5 hover:text-gold'}`}>
-              {label}
+        {/* DESKTOP NAV */}
+        <div className="hidden md:flex gap-8 items-center h-full">
+          <Link to="/" className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors ${location.pathname === '/' ? 'text-gold' : 'text-charcoal hover:text-gold'}`}>
+            Home
+          </Link>
+
+          {/* MEN MEGA MENU */}
+          <div className="group h-full flex items-center">
+            <Link to="/shop?gender=Men" className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors flex items-center gap-1 cursor-pointer h-full ${location.search.includes('gender=Men') ? 'text-gold' : 'text-charcoal hover:text-gold'}`}>
+              Men <span className="text-[0.6rem] transition-transform duration-300 group-hover:rotate-180">▼</span>
             </Link>
-          ))}
+            {/* Dropdown */}
+            <div className="absolute top-[70px] left-0 right-0 bg-white border-b border-gold/10 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
+              <div className="max-w-[1280px] mx-auto px-12 py-10 grid grid-cols-4 gap-12">
+                <div>
+                  <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Apparel</div>
+                  <div className="flex flex-col gap-3">
+                    {['Shirt', 'T-shirt', 'Coat'].map(sub => (
+                      <Link key={sub} to={`/shop?gender=Men&subCategory=Men ${sub}`} className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">{sub}s</Link>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Footwear</div>
+                  <div className="flex flex-col gap-3">
+                    {['Sport Shoe', 'Boot'].map(sub => (
+                      <Link key={sub} to={`/shop?gender=Men&subCategory=Men ${sub}`} className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">{sub}s</Link>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Accessories</div>
+                  <div className="flex flex-col gap-3">
+                    <Link to="/shop?gender=Men&subCategory=Men Watch" className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">Watches</Link>
+                  </div>
+                </div>
+                <div className="bg-cream rounded-2xl p-6 flex flex-col justify-end relative overflow-hidden group/img">
+                  <img src="https://images.unsplash.com/photo-1593032465175-481ac7f401a0?w=600&q=80" alt="Men's Collection" className="absolute inset-0 w-full h-full object-cover opacity-20 transition-transform duration-700 group-hover/img:scale-110" />
+                  <div className="relative z-10">
+                    <div className="font-playfair text-xl font-bold text-charcoal mb-2">Heritage Men</div>
+                    <Link to="/shop?gender=Men" className="text-gold font-bold text-[0.8rem] uppercase tracking-widest hover:underline">Explore All</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* WOMEN MEGA MENU */}
+          <div className="group h-full flex items-center">
+            <Link to="/shop?gender=Women" className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors flex items-center gap-1 cursor-pointer h-full ${location.search.includes('gender=Women') ? 'text-gold' : 'text-charcoal hover:text-gold'}`}>
+              Women <span className="text-[0.6rem] transition-transform duration-300 group-hover:rotate-180">▼</span>
+            </Link>
+            {/* Dropdown */}
+            <div className="absolute top-[70px] left-0 right-0 bg-white border-b border-gold/10 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
+              <div className="max-w-[1280px] mx-auto px-12 py-10 grid grid-cols-4 gap-12">
+                <div>
+                  <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Apparel</div>
+                  <div className="flex flex-col gap-3">
+                    {['Shirt', 'T-shirt', 'Coat'].map(sub => (
+                      <Link key={sub} to={`/shop?gender=Women&subCategory=Women ${sub}`} className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">{sub}s</Link>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Footwear</div>
+                  <div className="flex flex-col gap-3">
+                    {['Sport Shoe', 'Boot'].map(sub => (
+                      <Link key={sub} to={`/shop?gender=Women&subCategory=Women ${sub}`} className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">{sub}s</Link>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Accessories</div>
+                  <div className="flex flex-col gap-3">
+                    <Link to="/shop?gender=Women&subCategory=Women Watch" className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">Watches</Link>
+                  </div>
+                </div>
+                <div className="bg-cream rounded-2xl p-6 flex flex-col justify-end relative overflow-hidden group/img">
+                  <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80" alt="Women's Collection" className="absolute inset-0 w-full h-full object-cover opacity-10 transition-transform duration-700 group-hover/img:scale-110" />
+                  <div className="relative z-10">
+                    <div className="font-playfair text-xl font-bold text-charcoal mb-2">Grace Women</div>
+                    <Link to="/shop?gender=Women" className="text-gold font-bold text-[0.8rem] uppercase tracking-widest hover:underline">Explore All</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Link to="/shop" className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors ${location.pathname === '/shop' && !location.search ? 'text-gold' : 'text-charcoal hover:text-gold'}`}>
+            Full Collection
+          </Link>
+          <Link to="/about" className={`font-inter text-[0.88rem] font-medium tracking-wide transition-colors ${location.pathname === '/about' ? 'text-gold' : 'text-charcoal hover:text-gold'}`}>
+            About
+          </Link>
         </div>
 
         {/* DESKTOP RIGHT ACTIONS */}
@@ -128,12 +215,18 @@ export default function Navbar() {
         <div className="flex flex-col px-6 pt-8 pb-6 overflow-y-auto h-full">
           {/* Nav Links */}
           <div className="flex flex-col gap-1 mb-8">
-            {[['/', 'Home'], ['/shop', 'Collection'], ['/about', 'About']].map(([path, label]) => (
+            {[
+              ['/', 'Home'],
+              ['/shop?gender=Men', 'Men'],
+              ['/shop?gender=Women', 'Women'],
+              ['/shop', 'Full Collection'],
+              ['/about', 'About']
+            ].map(([path, label]) => (
               <Link
                 key={path}
                 to={path}
                 onClick={() => setMobileOpen(false)}
-                className={`font-playfair text-2xl font-semibold py-3 border-b border-gray-100 transition-colors ${location.pathname === path ? 'text-gold' : 'text-charcoal hover:text-gold'}`}
+                className={`font-playfair text-2xl font-semibold py-3 border-b border-gray-100 transition-colors ${location.pathname + location.search === path ? 'text-gold' : 'text-charcoal hover:text-gold'}`}
               >
                 {label}
               </Link>

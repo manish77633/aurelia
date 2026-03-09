@@ -19,12 +19,33 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     { $match: { paymentMethod: 'COD', status: { $nin: ['Delivered', 'Cancelled'] } } },
     { $group: { _id: null, total: { $sum: '$totalPrice' } } },
   ]);
+  // Daily revenue for the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const dailyRevenue = await Order.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: sevenDaysAgo },
+        $or: [{ isPaid: true }, { paymentMethod: 'COD', status: 'Delivered' }]
+      }
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        total: { $sum: "$totalPrice" }
+      }
+    },
+    { $sort: { _id: 1 } }
+  ]);
+
   res.json({
     totalUsers,
     totalProducts,
     totalOrders,
     totalRevenue: totalRevenue[0]?.total || 0,
     codPendingRevenue: codPending[0]?.total || 0,
+    dailyRevenue,
   });
 });
 

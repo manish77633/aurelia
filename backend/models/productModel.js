@@ -18,8 +18,10 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['Luxury Watches', 'Designer Bags', 'Premium Shoes', 'Exclusive Apparel'],
+      // enum: ['Luxury Watches', 'Designer Bags', 'Premium Shoes', 'Exclusive Apparel'],
     },
+    subCategory: { type: String },
+    gender: { type: String, enum: ['Men', 'Women', 'Unisex'], default: 'Unisex' },
     colors: [{ type: String }],
     image: { type: String, required: true },
     images: [{ type: String }],

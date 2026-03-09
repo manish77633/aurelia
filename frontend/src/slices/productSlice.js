@@ -23,15 +23,37 @@ export const submitReview = createAsyncThunk('products/review', async ({ product
 
 const productSlice = createSlice({
   name: 'products',
-  initialState: { list: [], current: null, loading: false, error: null },
-  reducers: {},
+  initialState: { list: [], current: null, page: 1, pages: 1, total: 0, loading: false, error: null },
+  reducers: {
+    resetProducts: (s) => { s.list = []; s.page = 1; }
+  },
   extraReducers: (b) => {
     b.addCase(fetchProducts.pending, s => { s.loading = true; });
-    b.addCase(fetchProducts.fulfilled, (s, a) => { s.loading = false; s.list = a.payload; });
+    b.addCase(fetchProducts.fulfilled, (s, a) => {
+      s.loading = false;
+      const data = a.payload;
+      if (Array.isArray(data)) {
+        s.list = data;
+        s.page = 1;
+        s.pages = 1;
+        s.total = data.length;
+      } else if (data && data.products) {
+        const { products, page, pages, total } = data;
+        if (page === 1) {
+          s.list = products;
+        } else {
+          s.list = [...s.list, ...products];
+        }
+        s.page = page;
+        s.pages = pages;
+        s.total = total;
+      }
+    });
     b.addCase(fetchProducts.rejected, (s, a) => { s.loading = false; s.error = a.payload; });
     b.addCase(fetchProductById.pending, s => { s.loading = true; s.current = null; });
     b.addCase(fetchProductById.fulfilled, (s, a) => { s.loading = false; s.current = a.payload; });
     b.addCase(fetchProductById.rejected, (s, a) => { s.loading = false; s.error = a.payload; });
   },
 });
+export const { resetProducts } = productSlice.actions;
 export default productSlice.reducer;

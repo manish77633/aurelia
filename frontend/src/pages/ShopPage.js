@@ -5,9 +5,11 @@ import ProductCard from '../components/ui/ProductCard';
 import Loader from '../components/ui/Loader';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
+import QuickViewModal from '../components/ui/QuickViewModal';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const CATEGORIES = ['All', 'Luxury Watches', 'Designer Bags', 'Premium Shoes', 'Exclusive Apparel'];
-const COLORS = ['All', 'Black', 'White', 'Gold', 'Brown', 'Blue', 'Cream', 'Cognac', 'Navy'];
+const CATEGORIES = ['All', 'Apparel', 'Footwear', 'Accessories'];
+const COLORS = ['All', 'Black', 'White', 'Gold', 'Brown', 'Blue', 'Cream', 'Cognac', 'Navy', 'Silver', 'Charcoal', 'Camel'];
 const SORTS = [
   { val: '', label: 'Latest' },
   { val: 'price_asc', label: 'Price: Low to High' },
@@ -17,7 +19,9 @@ const SORTS = [
 
 export default function ShopPage() {
   const dispatch = useDispatch();
-  const { list: products, loading } = useSelector((s) => s.products);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { list: products, loading, page, pages, total } = useSelector((s) => s.products);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [color, setColor] = useState('All');
@@ -25,17 +29,73 @@ export default function ShopPage() {
   const [maxPrice, setMaxPrice] = useState('');
   const [sort, setSort] = useState('');
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
 
+  // Consolidated effect for fetching and resetting
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const genderParam = params.get('gender') || '';
+    const subCatParam = params.get('subCategory') || '';
+    const isNavbarNav = !!(genderParam || subCatParam);
+
+    // If it's a Navbar-triggered navigation, we should primarily trust the URL params.
+    // We'll ignore the local 'search' and 'category' if gender/subcat are present to avoid conflicts.
+    const effectiveSearch = isNavbarNav ? '' : search;
+    const effectiveCategory = (subCatParam || genderParam) ? '' : (category === 'All' ? '' : category);
+
+    // Fetch products
     dispatch(fetchProducts({
-      keyword: search,
-      category: category === 'All' ? '' : category,
+      keyword: effectiveSearch,
+      category: effectiveCategory,
       color: color === 'All' ? '' : color,
-      minPrice, maxPrice, sort,
+      minPrice,
+      maxPrice,
+      sort,
+      gender: genderParam,
+      subCategory: subCatParam,
+      page: currentPage,
+      limit: 12
     }));
-  }, [dispatch, search, category, color, minPrice, maxPrice, sort]);
+  }, [dispatch, location.search, search, category, color, minPrice, maxPrice, sort, currentPage]);
+
+  // Handle local filter resets on URL change (Navbar clicks)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    // If the user navigates to /shop with NO params, or with gender/subCat, reset local filters.
+    // This covers "Full Collection" click and direct Navbar link clicks.
+    if (!location.search || params.get('gender') || params.get('subCategory')) {
+      setSearch('');
+      setCategory('All');
+      setColor('All');
+      setMinPrice('');
+      setMaxPrice('');
+      setSort('');
+      setCurrentPage(1);
+    }
+  }, [location.search]);
 
   const toggleFiltersMobile = () => setShowFiltersMobile(!showFiltersMobile);
+
+  const loadMore = () => {
+    if (currentPage < pages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (category !== 'All') count++;
+    if (color !== 'All') count++;
+    if (minPrice || maxPrice) count++;
+    const params = new URLSearchParams(location.search);
+    if (params.get('gender')) count++;
+    if (params.get('subCategory')) count++;
+    return count;
+  };
+
+  const genderName = new URLSearchParams(location.search).get('gender');
+  const subCatName = new URLSearchParams(location.search).get('subCategory');
 
   return (
     <div className="bg-[#FAFAFA] min-h-[80vh]">
@@ -43,7 +103,11 @@ export default function ShopPage() {
       <div className="bg-white border-b border-[#CFA052]/10 py-8 px-6 md:px-12 lg:pt-10">
         <div className="max-w-[1280px] mx-auto">
           <span className="text-[0.65rem] md:text-[0.7rem] font-bold tracking-[4px] text-[#CFA052] uppercase block">Aurelia Luxe</span>
-          <h1 className="font-playfair text-[2rem] md:text-[2.4rem] font-bold text-[#1A1A1A] mt-2 mb-5">The Collection</h1>
+          <h1 className="font-playfair text-[2rem] md:text-[2.4rem] font-bold text-[#1A1A1A] mt-2 mb-5">
+            {subCatName
+              ? (subCatName.toLowerCase().includes('watch') ? `${subCatName}es` : `${subCatName}s`)
+              : genderName ? `${genderName}'s Collection` : 'The Collection'}
+          </h1>
 
           {/* SEARCH BEHAVIOR */}
           <div className="relative max-w-[600px] flex gap-3">
@@ -57,7 +121,7 @@ export default function ShopPage() {
             </div>
             {/* MOBILE FILTER BUTTON */}
             <button className="lg:hidden flex shrink-0 items-center justify-center p-3 border-[1.5px] border-[#e8e0d6] rounded-xl bg-white text-charcoal active:bg-gray-100" onClick={toggleFiltersMobile}>
-              <TuneIcon sx={{ fontSize: 22, color: showFiltersMobile ? '#CFA052' : '#6B7280' }} />
+              <TuneIcon sx={{ fontSize: 22, color: getActiveFiltersCount() > 0 ? '#CFA052' : '#6B7280' }} />
             </button>
           </div>
         </div>
@@ -71,13 +135,22 @@ export default function ShopPage() {
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#f0ebe3]">
               <TuneIcon sx={{ fontSize: 18, color: '#CFA052' }} />
               <span className="font-playfair font-semibold text-base">Filters</span>
+              {getActiveFiltersCount() > 0 && <span className="ml-auto bg-gold text-white text-[0.6rem] font-bold px-1.5 py-0.5 rounded-md">{getActiveFiltersCount()}</span>}
             </div>
 
             {/* Category */}
             <div className="mb-7">
               <div className="text-[0.7rem] font-bold tracking-[2px] text-[#CFA052] uppercase mb-3">Category</div>
               {CATEGORIES.map(c => (
-                <button key={c} onClick={() => setCategory(c)}
+                <button key={c} onClick={() => {
+                  setCategory(c);
+                  // If switching broad categories, clear the specific subCategory from Nav
+                  if (subCatName) {
+                    const params = new URLSearchParams(location.search);
+                    params.delete('subCategory');
+                    navigate(`/shop?${params.toString()}`);
+                  }
+                }}
                   className={`block w-full text-left bg-transparent border-none py-2 text-[0.88rem] cursor-pointer transition-all duration-200 mb-1 rounded-sm pl-2 ${category === c ? 'font-bold text-[#CFA052] border-l-2 border-l-[#CFA052]' : 'font-normal text-gray-500 border-l-2 border-l-transparent'}`}>
                   {c}
                 </button>
@@ -120,26 +193,54 @@ export default function ShopPage() {
         <div>
           {/* Sort + count bar */}
           <div className="flex justify-between items-center mb-6">
-            <span className="text-[0.85rem] text-gray-500">{products.length} items found</span>
+            <span className="text-[0.85rem] text-gray-500">{total || products.length} items found</span>
             <select value={sort} onChange={e => setSort(e.target.value)}
               className="px-4 py-2 border-[1.5px] border-[#e8e0d6] rounded-lg text-[0.85rem] font-inter text-[#1A1A1A] bg-white outline-none cursor-pointer focus:border-[#CFA052] transition-colors">
               {SORTS.map(s => <option key={s.val} value={s.val}>{s.label}</option>)}
             </select>
           </div>
 
-          {loading ? <Loader /> : products.length === 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map(p => (
+              <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />
+            ))}
+          </div>
+
+          {loading && <div className="mt-10"><Loader /></div>}
+
+          {!loading && pages > currentPage && (
+            <div className="text-center mt-12 mb-20">
+              <button
+                onClick={loadMore}
+                className="btn-gold px-12 py-4"
+              >
+                Load More Products
+              </button>
+            </div>
+          )}
+
+          {!loading && products.length === 0 && (
             <div className="text-center py-20 px-5 bg-white rounded-2xl border border-[#FAFAFA]">
               <div className="text-5xl opacity-20 mb-4">🔍</div>
               <div className="font-playfair text-xl md:text-2xl font-bold mb-2 text-[#1A1A1A]">No items found</div>
               <div className="text-[0.9rem] text-gray-500">Try adjusting your filters or search.</div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map(p => <ProductCard key={p._id} product={p} />)}
+          )}
+
+          {!loading && products.length > 0 && currentPage === pages && (
+            <div className="text-center mt-12 mb-20 text-gray-400 text-sm font-medium italic">
+              — You've reached the end of the collection —
             </div>
           )}
         </div>
       </div>
+
+      {quickViewProduct && (
+        <QuickViewModal
+          product={quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+        />
+      )}
     </div>
   );
 }

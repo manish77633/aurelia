@@ -21,10 +21,20 @@ export const updateProfile = createAsyncThunk('auth/updateProfile', async (form,
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { user: saved ? JSON.parse(saved) : null, loading: false, error: null },
+  initialState: {
+    user: saved ? JSON.parse(saved) : null,
+    loading: false,
+    error: null,
+    adminVerified: sessionStorage.getItem('adminVerified') === 'true'
+  },
   reducers: {
     logout: (state) => { state.user = null; localStorage.removeItem('aureliaUser'); },
     setCredentials: (state, action) => { state.user = action.payload; localStorage.setItem('aureliaUser', JSON.stringify(action.payload)); },
+    setAdminVerified: (state, action) => {
+      state.adminVerified = action.payload;
+      if (action.payload) sessionStorage.setItem('adminVerified', 'true');
+      else sessionStorage.removeItem('adminVerified');
+    },
     clearError: (state) => { state.error = null; },
   },
   extraReducers: (b) => {
@@ -39,5 +49,5 @@ const authSlice = createSlice({
     b.addCase(updateProfile.rejected, (s, a) => { s.loading = false; s.error = a.payload; });
   },
 });
-export const { logout, setCredentials, clearError } = authSlice.actions;
+export const { logout, setCredentials, setAdminVerified, clearError } = authSlice.actions;
 export default authSlice.reducer;

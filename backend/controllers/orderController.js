@@ -170,7 +170,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
   const updated = await order.save();
 
   // Send email notification
-  sendStatusEmail(order, newStatus);
+  await sendStatusEmail(order, newStatus);
 
   res.json(updated);
 });

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../slices/productSlice';
 import ProductCard from '../components/ui/ProductCard';
+import QuickViewModal from '../components/ui/QuickViewModal';
 import Loader from '../components/ui/Loader';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
@@ -43,6 +44,7 @@ export default function HomePage() {
   const dispatch = useDispatch();
   const { list: products, loading } = useSelector((s) => s.products);
   const [openFaq, setOpenFaq] = useState(null);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
 
   useEffect(() => { dispatch(fetchProducts({ featured: 'true' })); }, [dispatch]);
 
@@ -134,7 +136,7 @@ export default function HomePage() {
           </div>
           {loading ? <Loader /> : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featured.map(p => <ProductCard key={p._id} product={p} />)}
+              {featured.map(p => <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />)}
             </div>
           )}
           <div className="text-center mt-12 md:mt-16">
@@ -205,6 +207,12 @@ export default function HomePage() {
         </div>
       </section>
 
+      {quickViewProduct && (
+        <QuickViewModal
+          product={quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+        />
+      )}
     </div>
   );
 }

@@ -21,11 +21,28 @@ import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const TABS = ['Dashboard', 'Products', 'Orders', 'Users'];
-const CATS = ['Luxury Watches', 'Designer Bags', 'Premium Shoes', 'Exclusive Apparel'];
+const CATS = ['Apparel', 'Footwear', 'Accessories'];
+const GENDERS = ['Men', 'Women', 'Unisex'];
+const SUB_CATS = [
+  'Men Shirt', 'Men T-shirt', 'Men Coat', 'Men Sport Shoe', 'Men Boot', 'Men Watch',
+  'Women Shirt', 'Women T-shirt', 'Women Coat', 'Women Sport Shoe', 'Women Boot', 'Women Watch'
+];
 
-const EMPTY_FORM = { name: '', description: '', price: '', category: 'Luxury Watches', colors: '', countInStock: '', featured: false };
+const EMPTY_FORM = {
+  name: '',
+  description: '',
+  price: '',
+  category: 'Apparel',
+  subCategory: '',
+  gender: 'Men',
+  colors: '',
+  countInStock: '',
+  featured: false
+};
 
 export default function AdminPage() {
   const { user } = useSelector(s => s.auth);
@@ -62,7 +79,10 @@ export default function AdminPage() {
     try { const { data } = await axios.get(`${API}/admin/stats`, { headers }); setStats(data); } catch { }
   };
   const fetchProducts = async () => {
-    try { const { data } = await axios.get(`${API}/products`, { headers }); setProducts(data); } catch { }
+    try {
+      const { data } = await axios.get(`${API}/products`, { headers });
+      setProducts(Array.isArray(data) ? data : (data.products || []));
+    } catch { }
   };
   const fetchOrders = async () => {
     try { const { data } = await axios.get(`${API}/orders`, { headers }); setOrders(data); } catch { }
@@ -217,7 +237,17 @@ export default function AdminPage() {
   };
 
   const handleEdit = (p) => {
-    setForm({ name: p.name, description: p.description, price: p.price, category: p.category, colors: (p.colors || []).join(', '), countInStock: p.countInStock, featured: p.featured });
+    setForm({
+      name: p.name,
+      description: p.description,
+      price: p.price,
+      category: p.category,
+      subCategory: p.subCategory || '',
+      gender: p.gender || 'Men',
+      colors: (p.colors || []).join(', '),
+      countInStock: p.countInStock,
+      featured: p.featured
+    });
     // Load existing images
     const imgs = (p.images && p.images.length > 0) ? p.images : (p.image ? [p.image] : []);
     const previews = imgs.map(url => ({
@@ -325,6 +355,63 @@ export default function AdminPage() {
               ))}
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+              {/* Sales Chart */}
+              <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.05)] h-[350px]">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="font-playfair text-lg font-bold">Revenue Analytics</div>
+                  <div className="text-[0.65rem] font-bold text-gold uppercase tracking-widest">Last 7 Days</div>
+                </div>
+                <ResponsiveContainer width="100%" height="80%">
+                  <AreaChart data={stats.dailyRevenue || []}>
+                    <defs>
+                      <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#CFA052" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#CFA052" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis dataKey="_id" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9CA3AF' }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9CA3AF' }} tickFormatter={v => `$${v}`} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }} />
+                    <Area type="monotone" dataKey="total" stroke="#CFA052" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Low Stock Alerts */}
+              <div className="bg-white rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="font-playfair text-lg font-bold">Stock Alerts</div>
+                  <ErrorOutlineIcon sx={{ color: '#f87171', fontSize: 20 }} />
+                </div>
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  {products.filter(p => p.countInStock <= 5).length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-[#9CA3AF]">
+                      <CheckCircleOutlinedIcon sx={{ fontSize: 40, mb: 1, opacity: 0.2 }} />
+                      <div className="text-[0.8rem]">All stock levels healthy</div>
+                    </div>
+                  ) : (
+                    products.filter(p => p.countInStock <= 5).map(p => (
+                      <div key={p._id} className="flex items-center gap-3 p-3 mb-2 bg-red-50/50 rounded-xl border border-red-100/50">
+                        <img src={p.image} className="w-10 h-10 rounded-lg object-cover" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[0.78rem] font-bold text-charcoal truncate">{p.name}</div>
+                          <div className="text-[0.68rem] text-red-500 font-bold">{p.countInStock} units left</div>
+                        </div>
+                        <button onClick={() => { setTab('Products'); handleEdit(p); }} className="text-[0.65rem] font-bold text-gold hover:underline uppercase">Restock</button>
+                      </div>
+                    ))
+                  )}
+                </div>
+                {products.filter(p => p.countInStock <= 5).length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-50 text-center">
+                    <span className="text-[0.65rem] text-[#9CA3AF] font-medium italic">Monitor closely to avoid stockouts</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Recent Orders */}
             <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.05)]">
               <div className="font-playfair text-lg font-bold mb-5">Recent Orders</div>
@@ -389,6 +476,23 @@ export default function AdminPage() {
                   <label className={lbl}>Category</label>
                   <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={`${inp} cursor-pointer`}>
                     {CATS.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className={lbl}>Gender</label>
+                  <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })} className={`${inp} cursor-pointer`}>
+                    {GENDERS.map(g => <option key={g}>{g}</option>)}
+                  </select>
+                </div>
+
+                {/* Sub-Category */}
+                <div>
+                  <label className={lbl}>Sub-Category</label>
+                  <select value={form.subCategory} onChange={e => setForm({ ...form, subCategory: e.target.value })} className={`${inp} cursor-pointer`}>
+                    <option value="">None</option>
+                    {SUB_CATS.map(s => <option key={s}>{s}</option>)}
                   </select>
                 </div>
 

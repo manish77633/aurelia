@@ -133,7 +133,7 @@ export default function AboutPage() {
           </div>
           <div className="scroll-animate-right delay-2 relative mt-4 md:mt-0">
             <div className="rounded-[20px] overflow-hidden group" style={{ aspectRatio: '4/5' }}>
-              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=85" alt="Luxury Watch" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src="/our_story_luxury.png" alt="Luxury Masterpiece" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             </div>
             {/* floating badges */}
             <div className="float-badge absolute bottom-4 sm:bottom-7 left-0 sm:-left-6 bg-[#1A1A1A] rounded-2xl px-5 py-4 shadow-[0_12px_40px_rgba(0,0,0,0.25)]">

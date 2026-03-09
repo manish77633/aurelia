@@ -18,13 +18,27 @@ const streamUpload = (buffer) => {
     streamifier.createReadStream(buffer).pipe(stream);
   });
 };
-// GET /api/products
 const getProducts = asyncHandler(async (req, res) => {
-  const { keyword, category, color, minPrice, maxPrice, sort, featured } = req.query;
+  const { keyword, category, color, minPrice, maxPrice, sort, featured, gender, subCategory, page = 1, limit = 12 } = req.query;
   const query = {};
   if (keyword) query.name = { $regex: keyword, $options: 'i' };
-  if (category) query.category = category;
-  if (color) query.colors = { $in: [new RegExp(color, 'i')] };
+
+  // Handle Category (Match exactly if present and not 'All')
+  if (category && category !== 'All') {
+    query.category = { $regex: new RegExp(`^${category}$`, 'i') };
+  }
+
+  // Handle Gender (Strict matching)
+  if (gender) {
+    query.gender = gender;
+  }
+
+  // Handle Sub-category (Strict matching)
+  if (subCategory) {
+    query.subCategory = subCategory;
+  }
+
+  if (color && color !== 'All') query.colors = { $in: [new RegExp(color, 'i')] };
   if (minPrice || maxPrice) {
     query.price = {};
     if (minPrice) query.price.$gte = Number(minPrice);
@@ -37,8 +51,16 @@ const getProducts = asyncHandler(async (req, res) => {
   if (sort === 'price_desc') sortOption = { price: -1 };
   if (sort === 'top_rated') sortOption = { rating: -1 };
 
-  const products = await Product.find(query).sort(sortOption);
-  res.json(products);
+  const skip = (Number(page) - 1) * Number(limit);
+  const products = await Product.find(query).sort(sortOption).skip(skip).limit(Number(limit));
+  const total = await Product.countDocuments(query);
+
+  res.json({
+    products,
+    page: Number(page),
+    pages: Math.ceil(total / Number(limit)),
+    total,
+  });
 });
 
 // GET /api/products/:id
@@ -52,10 +74,13 @@ const getProductById = asyncHandler(async (req, res) => {
 const getRelatedProducts = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
+
   const related = await Product.find({
     category: product.category,
+    gender: product.gender,
     _id: { $ne: product._id },
   }).limit(4);
+
   res.json(related);
 });
 

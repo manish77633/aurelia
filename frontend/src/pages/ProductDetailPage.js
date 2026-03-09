@@ -8,6 +8,7 @@ import { addToCart } from '../slices/cartSlice';
 import { toggleWishlist } from '../slices/wishlistSlice';
 import Loader from '../components/ui/Loader';
 import ProductCard from '../components/ui/ProductCard';
+import QuickViewModal from '../components/ui/QuickViewModal';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -30,6 +31,7 @@ export default function ProductDetailPage() {
   const [reviewComment, setReviewComment] = useState('');
   const [hoverStar, setHoverStar] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
 
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -214,11 +216,18 @@ export default function ProductDetailPage() {
               <h2 className="font-playfair text-2xl md:text-[1.8rem] font-bold mt-2 text-charcoal">More from Aurelia</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {related.map(p => <ProductCard key={p._id} product={p} />)}
+              {related.map(p => <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />)}
             </div>
           </div>
         )}
       </div>
+
+      {quickViewProduct && (
+        <QuickViewModal
+          product={quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+        />
+      )}
     </div>
   );
 }

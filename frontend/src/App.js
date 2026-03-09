@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 import OAuthSuccess from './pages/OAuthSuccess';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
@@ -30,8 +31,9 @@ const ProtectedRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" replace />;
 };
 const AdminRoute = ({ children }) => {
-  const { user } = useSelector((s) => s.auth);
-  return user?.role === 'admin' ? children : <Navigate to="/" replace />;
+  const { user, adminVerified } = useSelector((s) => s.auth);
+  if (!user || user.role !== 'admin') return <Navigate to="/" replace />;
+  return adminVerified ? children : <Navigate to="/admin-login" replace />;
 };
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -62,6 +64,7 @@ export default function App() {
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+          <Route path="/admin-login" element={<AdminLoginPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
