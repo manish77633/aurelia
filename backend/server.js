@@ -14,14 +14,17 @@ require('./config/passport');
 connectDB();
 const app = express();
 
-// Security HTTP headers
-app.use(helmet());
+// Security HTTP headers - adjust crossOriginResourcePolicy for external images if needed
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 // Body parser, reading data from body into req.body
-app.use(express.json({ limit: '10kb' })); // Limit body size to prevent DOS
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// Increased limit to 50mb to allow for product image uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());

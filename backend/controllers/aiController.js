@@ -4,7 +4,7 @@ const Product = require('../models/productModel');
 
 const getModel = () => {
 	const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-	return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+	return genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' }); // Using lite model for higher free-tier request limits
 };
 
 // @desc  Generate product description
@@ -95,12 +95,24 @@ Instructions:
 		],
 	});
 
-	const result = await chatSession.sendMessage(message);
-	const reply = result.response.text().trim();
+	let reply = "";
+	try {
+		const result = await chatSession.sendMessage(message);
+		reply = result.response.text().trim();
+	} catch (error) {
+		console.error("Gemini API Error:", error.message);
+		// If it's a rate-limit or quota error, send a friendly user-facing fallback instead of crashing
+		if (error.message.includes('429') || error.message.includes('Quota')) {
+			reply = "I'm currently assisting multiple premium clients at once and need a tiny breather! 🕰️ Please try sending your message again in about 30 seconds. ✨";
+		} else {
+			reply = "I'm having a little trouble connecting to my knowledge base right now. Please try again in a moment! 🙏";
+		}
+	}
 
-	// Save to history
+	// Save to history only if it's a successful response from AI or our friendly simulated fallback
 	history.push({ role: 'user', parts: [{ text: message }] });
 	history.push({ role: 'model', parts: [{ text: reply }] });
+
 	// Trim history to last 20 exchanges to avoid token bloat
 	if (history.length > 40) history.splice(0, history.length - 40);
 
