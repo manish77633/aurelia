@@ -29,6 +29,9 @@ app.use(mongoSanitize());
 // Data sanitization against XSS
 app.use(xss());
 
+// Trust proxy required for Render load balancer to correctly identify user IPs for rate limiting
+app.set('trust proxy', 1);
+
 // Rate Limiting to prevent brute-force attacks
 const limiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
