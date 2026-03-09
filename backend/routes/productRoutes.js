@@ -7,8 +7,8 @@ const { upload } = require('../middleware/uploadMiddleware');
 router.get('/', getProducts);
 router.get('/:id/related', getRelatedProducts);
 router.get('/:id', getProductById);
-router.post('/', protect, admin, upload.single('image'), createProduct);
-router.put('/:id', protect, admin, upload.single('image'), updateProduct);
+router.post('/', protect, admin, upload.array('images', 10), createProduct);
+router.put('/:id', protect, admin, upload.array('images', 10), updateProduct);
 router.delete('/:id', protect, admin, deleteProduct);
 router.post('/:id/reviews', protect, createProductReview);
 

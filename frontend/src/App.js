@@ -20,6 +20,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import OrdersPage from './pages/OrdersPage';
 import AboutPage from './pages/AboutPage';
 import CheckoutPage from './pages/CheckoutPage';
+import Chatbot from './components/Chatbot';
 
 import { fetchCart } from './slices/cartSlice';
 import { fetchWishlist } from './slices/wishlistSlice';
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+      <Chatbot />
       <Footer />
       <ToastContainer position="bottom-right" autoClose={2500} theme="light" />
     </>

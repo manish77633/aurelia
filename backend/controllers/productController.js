@@ -43,22 +43,45 @@ const getRelatedProducts = asyncHandler(async (req, res) => {
   res.json(related);
 });
 
-// POST /api/products  (admin — supports URL or file upload)
+// POST /api/products  (admin — supports URL or file upload, multiple images)
 const createProduct = asyncHandler(async (req, res) => {
-  let { name, description, price, category, colors, countInStock, featured, image } = req.body;
+  let { name, description, price, category, colors, countInStock, featured, image, imageUrls, mainImageIndex } = req.body;
 
-  // If file was uploaded, save local path
-  if (req.file) {
-    image = `/uploads/${req.file.filename}`;
+  // Build images array from uploaded files + any URL-based images
+  let allImages = [];
+
+  // Uploaded files
+  if (req.files && req.files.length > 0) {
+    req.files.forEach(f => allImages.push(`/uploads/${f.filename}`));
   }
 
-  if (!image) { res.status(400); throw new Error('Product image is required'); }
+  // URL-based images (sent as JSON array string or comma-separated)
+  if (imageUrls) {
+    try {
+      const urls = JSON.parse(imageUrls);
+      if (Array.isArray(urls)) allImages = allImages.concat(urls);
+    } catch {
+      // comma-separated fallback
+      allImages = allImages.concat(imageUrls.split(',').map(u => u.trim()).filter(Boolean));
+    }
+  }
+
+  // Legacy single image field fallback
+  if (allImages.length === 0 && image) {
+    allImages.push(image);
+  }
+
+  if (allImages.length === 0) { res.status(400); throw new Error('At least one product image is required'); }
+
+  // Determine main image
+  const mainIdx = Number(mainImageIndex) || 0;
+  const mainImage = allImages[mainIdx] || allImages[0];
 
   const colorsArray = typeof colors === 'string' ? colors.split(',').map(c => c.trim()) : colors || [];
 
   const product = await Product.create({
     name, description, price: Number(price), category,
-    colors: colorsArray, image,
+    colors: colorsArray, image: mainImage, images: allImages,
     countInStock: Number(countInStock) || 10,
     featured: featured === 'true' || featured === true,
     seller: req.user._id,
@@ -71,11 +94,47 @@ const updateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
 
-  let { name, description, price, category, colors, countInStock, featured, image } = req.body;
+  let { name, description, price, category, colors, countInStock, featured, image, imageUrls, mainImageIndex, existingImages } = req.body;
 
-  if (req.file) {
-    image = `/uploads/${req.file.filename}`;
+  // Build images array
+  let allImages = [];
+
+  // Keep existing images if provided (sent as JSON array string)
+  if (existingImages) {
+    try {
+      const kept = JSON.parse(existingImages);
+      if (Array.isArray(kept)) allImages = allImages.concat(kept);
+    } catch { }
   }
+
+  // Add newly uploaded files
+  if (req.files && req.files.length > 0) {
+    req.files.forEach(f => allImages.push(`/uploads/${f.filename}`));
+  }
+
+  // Add URL-based images
+  if (imageUrls) {
+    try {
+      const urls = JSON.parse(imageUrls);
+      if (Array.isArray(urls)) allImages = allImages.concat(urls);
+    } catch {
+      allImages = allImages.concat(imageUrls.split(',').map(u => u.trim()).filter(Boolean));
+    }
+  }
+
+  // Legacy single image field fallback
+  if (allImages.length === 0 && image) {
+    allImages.push(image);
+  }
+
+  // If still no images, keep existing
+  if (allImages.length === 0) {
+    allImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  }
+
+  // Determine main image
+  const mainIdx = Number(mainImageIndex) || 0;
+  const mainImage = allImages[mainIdx] || allImages[0];
 
   const colorsArray = typeof colors === 'string' ? colors.split(',').map(c => c.trim()) : colors || product.colors;
 
@@ -84,7 +143,8 @@ const updateProduct = asyncHandler(async (req, res) => {
   product.price = price ? Number(price) : product.price;
   product.category = category ?? product.category;
   product.colors = colorsArray;
-  product.image = image ?? product.image;
+  product.image = mainImage;
+  product.images = allImages;
   product.countInStock = countInStock ? Number(countInStock) : product.countInStock;
   product.featured = featured !== undefined ? (featured === 'true' || featured === true) : product.featured;
 

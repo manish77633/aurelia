@@ -8,6 +8,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 
 const STEPS = ['Personal Details', 'Shipping Address', 'Payment'];
 
@@ -22,6 +23,8 @@ export default function CheckoutPage() {
     address: '', city: '', postalCode: '', country: 'India',
   });
   const [errors, setErrors] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState('Razorpay');
+  const [codLoading, setCodLoading] = useState(false);
 
   const total = items.reduce((s, i) => s + (i.product?.price || 0) * i.qty, 0);
   const API = process.env.REACT_APP_API_URL;
@@ -46,6 +49,10 @@ export default function CheckoutPage() {
   const handleNext = () => { if (validate()) setStep(s => s + 1); };
 
   const handleRazorpay = async () => {
+    if (!window.Razorpay) {
+      toast.error('Razorpay SDK not loaded. Please refresh the page and try again.');
+      return;
+    }
     try {
       const { data } = await axios.post(`${API}/payment/create-order`, { amount: total },
         { headers: { Authorization: `Bearer ${user.token}` } });
@@ -58,22 +65,54 @@ export default function CheckoutPage() {
         prefill: { name: form.fullName, email: form.email, contact: form.phone },
         theme: { color: '#CFA052' },
         handler: async (response) => {
-          await axios.post(`${API}/payment/verify`, response, { headers: { Authorization: `Bearer ${user.token}` } });
-          const orderItems = items.map(i => ({ name: i.product.name, qty: i.qty, image: i.product.image, price: i.product.price, product: i.product._id }));
-          await axios.post(`${API}/orders`, {
-            orderItems,
-            shippingAddress: { address: form.address, city: form.city, postalCode: form.postalCode, country: form.country },
-            paymentMethod: 'Razorpay', itemsPrice: total, shippingPrice: 0, taxPrice: 0, totalPrice: total,
-            paymentResult: { ...response, status: 'paid' },
-          }, { headers: { Authorization: `Bearer ${user.token}` } });
-          dispatch(clearCart());
-          toast.success('Order placed successfully! 🎉');
-          navigate('/orders');
+          try {
+            await axios.post(`${API}/payment/verify`, response, { headers: { Authorization: `Bearer ${user.token}` } });
+            const orderItems = items.map(i => ({ name: i.product.name, qty: i.qty, image: i.product.image, price: i.product.price, product: i.product._id }));
+            await axios.post(`${API}/orders`, {
+              orderItems,
+              shippingAddress: { address: form.address, city: form.city, postalCode: form.postalCode, country: form.country },
+              paymentMethod: 'Razorpay', itemsPrice: total, shippingPrice: 0, taxPrice: 0, totalPrice: total,
+              paymentResult: { ...response, status: 'paid' },
+            }, { headers: { Authorization: `Bearer ${user.token}` } });
+            dispatch(clearCart());
+            toast.success('Order placed successfully! 🎉');
+            navigate('/orders');
+          } catch (err) {
+            console.error('Order creation after payment failed:', err);
+            toast.error(err.response?.data?.message || 'Order creation failed after payment.');
+          }
         },
       };
       const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', (resp) => {
+        console.error('Razorpay payment failed:', resp.error);
+        toast.error(`Payment failed: ${resp.error.description || resp.error.reason || 'Unknown error'}`);
+      });
       rzp.open();
-    } catch { toast.error('Payment initiation failed.'); }
+    } catch (err) {
+      console.error('Razorpay order creation failed:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Payment initiation failed. Check console for details.');
+    }
+  };
+
+  // ── COD handler ──
+  const handleCOD = async () => {
+    setCodLoading(true);
+    try {
+      const orderItems = items.map(i => ({ name: i.product.name, qty: i.qty, image: i.product.image, price: i.product.price, product: i.product._id }));
+      await axios.post(`${API}/orders`, {
+        orderItems,
+        shippingAddress: { address: form.address, city: form.city, postalCode: form.postalCode, country: form.country },
+        paymentMethod: 'COD', itemsPrice: total, shippingPrice: 0, taxPrice: 0, totalPrice: total,
+      }, { headers: { Authorization: `Bearer ${user.token}` } });
+      dispatch(clearCart());
+      toast.success('Order placed! Pay on delivery 🎉');
+      navigate('/orders');
+    } catch (err) {
+      console.error('COD order failed:', err);
+      toast.error(err.response?.data?.message || 'Failed to place order.');
+    }
+    setCodLoading(false);
   };
 
   const icons = [PersonOutlineIcon, HomeOutlinedIcon, PaymentOutlinedIcon];
@@ -172,11 +211,59 @@ export default function CheckoutPage() {
                     <span>Total</span><span>${total.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="bg-[#f5f0e8] rounded-xl px-4 py-3.5 text-[0.82rem] text-gray-500 mb-5 flex gap-2">
-                  🔒 Secured by Razorpay. Your payment information is encrypted and never stored.
+
+                {/* Payment Method Selector */}
+                <div className="mb-5">
+                  <label className="block text-[0.78rem] font-bold text-charcoal mb-3 tracking-wide">Choose Payment Method</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Razorpay Option */}
+                    <button
+                      onClick={() => setPaymentMethod('Razorpay')}
+                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${paymentMethod === 'Razorpay'
+                          ? 'border-[#CFA052] bg-[#fef9ec] shadow-[0_0_0_1px_rgba(207,160,82,0.3)]'
+                          : 'border-[#e8e0d6] bg-white hover:border-[#d4c4a8]'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <PaymentOutlinedIcon sx={{ fontSize: 18, color: paymentMethod === 'Razorpay' ? '#CFA052' : '#9CA3AF' }} />
+                        <span className={`text-[0.88rem] font-bold ${paymentMethod === 'Razorpay' ? 'text-[#CFA052]' : 'text-charcoal'}`}>Razorpay</span>
+                      </div>
+                      <p className="text-[0.72rem] text-gray-400 leading-snug">Cards, UPI, Netbanking, Wallets</p>
+                    </button>
+
+                    {/* COD Option */}
+                    <button
+                      onClick={() => setPaymentMethod('COD')}
+                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${paymentMethod === 'COD'
+                          ? 'border-[#CFA052] bg-[#fef9ec] shadow-[0_0_0_1px_rgba(207,160,82,0.3)]'
+                          : 'border-[#e8e0d6] bg-white hover:border-[#d4c4a8]'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <LocalShippingOutlinedIcon sx={{ fontSize: 18, color: paymentMethod === 'COD' ? '#CFA052' : '#9CA3AF' }} />
+                        <span className={`text-[0.88rem] font-bold ${paymentMethod === 'COD' ? 'text-[#CFA052]' : 'text-charcoal'}`}>Cash on Delivery</span>
+                      </div>
+                      <p className="text-[0.72rem] text-gray-400 leading-snug">Pay when your order arrives</p>
+                    </button>
+                  </div>
                 </div>
-                <button className="btn-gold w-full py-4 text-[1rem] flex items-center justify-center gap-2" onClick={handleRazorpay}>
-                  <PaymentOutlinedIcon sx={{ fontSize: 20 }} /> Pay ${total.toFixed(2)} with Razorpay
+
+                <div className="bg-[#f5f0e8] rounded-xl px-4 py-3.5 text-[0.82rem] text-gray-500 mb-5 flex gap-2">
+                  {paymentMethod === 'Razorpay'
+                    ? '🔒 Secured by Razorpay. Your payment information is encrypted and never stored.'
+                    : '📦 Cash on Delivery — Pay when your order is delivered to your doorstep.'}
+                </div>
+
+                <button
+                  className="btn-gold w-full py-4 text-[1rem] flex items-center justify-center gap-2"
+                  onClick={paymentMethod === 'Razorpay' ? handleRazorpay : handleCOD}
+                  disabled={codLoading}
+                >
+                  {paymentMethod === 'Razorpay' ? (
+                    <><PaymentOutlinedIcon sx={{ fontSize: 20 }} /> Pay ${total.toFixed(2)} with Razorpay</>
+                  ) : (
+                    codLoading ? 'Placing Order...' : <><LocalShippingOutlinedIcon sx={{ fontSize: 20 }} /> Place COD Order — ${total.toFixed(2)}</>
+                  )}
                 </button>
               </div>
             )}

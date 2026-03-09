@@ -9,8 +9,14 @@ const getDashboardStats = asyncHandler(async (req, res) => {
   const totalUsers = await User.countDocuments();
   const totalProducts = await Product.countDocuments();
   const totalOrders = await Order.countDocuments();
+  // Revenue from paid orders (Razorpay) + delivered COD orders
   const totalRevenue = await Order.aggregate([
-    { $match: { isPaid: true } },
+    { $match: { $or: [{ isPaid: true }, { paymentMethod: 'COD', status: 'Delivered' }] } },
+    { $group: { _id: null, total: { $sum: '$totalPrice' } } },
+  ]);
+  // COD revenue (pending — not yet delivered)
+  const codPending = await Order.aggregate([
+    { $match: { paymentMethod: 'COD', status: { $nin: ['Delivered', 'Cancelled'] } } },
     { $group: { _id: null, total: { $sum: '$totalPrice' } } },
   ]);
   res.json({
@@ -18,6 +24,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     totalProducts,
     totalOrders,
     totalRevenue: totalRevenue[0]?.total || 0,
+    codPendingRevenue: codPending[0]?.total || 0,
   });
 });
 

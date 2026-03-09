@@ -271,3 +271,122 @@ img {
   width: 400px;
   flex-shrink: 0;
 }
+
+/* ── Scroll-triggered animations ────────────────── */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-animate-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-animate-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-animate-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-visible {
+  opacity: 1 !important;
+  transform: translateY(0) translateX(0) scale(1) !important;
+}
+
+.delay-5 {
+  transition-delay: 0.75s;
+}
+
+.delay-6 {
+  transition-delay: 0.9s;
+}
+
+.delay-7 {
+  transition-delay: 1.05s;
+}
+
+.delay-8 {
+  transition-delay: 1.2s;
+}
+
+/* Floating animation for badges */
+@keyframes floatBadge {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.float-badge {
+  animation: floatBadge 3s ease-in-out infinite;
+}
+
+.float-badge-delay {
+  animation: floatBadge 3s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+/* Pulse dot for timeline */
+@keyframes pulseDot {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(207, 160, 82, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(207, 160, 82, 0);
+  }
+}
+
+.pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+/* Glow hover for value cards */
+.glow-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-hover:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(207, 160, 82, 0.15),
+    0 0 30px rgba(207, 160, 82, 0.08);
+  border-color: rgba(207, 160, 82, 0.4);
+}
+
+/* Skill tag hover */
+.skill-tag {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-tag:hover {
+  background: #CFA052;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(207, 160, 82, 0.3);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

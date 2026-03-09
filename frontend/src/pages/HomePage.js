@@ -53,18 +53,28 @@ export default function HomePage() {
     <div className="bg-cream min-h-screen">
 
       {/* ── HERO ─────────────────────────────────────── */}
-      <section className="relative min-h-[calc(100vh-70px)] flex items-center overflow-hidden bg-gradient-to-br from-[#f7f2ec] via-[#ede5d8] to-[#e5d9c8] pt-16 md:pt-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1800&q=85')] bg-cover bg-[center_40%] opacity-20" />
+      <section className="relative min-h-[calc(100vh-70px)] flex items-center overflow-hidden bg-[#fdfbf7] pt-16 md:pt-0">
+        {/* Background Image */}
+        <div className="absolute inset-0 w-full h-full">
+          <div className="absolute inset-0 bg-[url('https://luxe-showcase-hub.lovable.app/assets/hero-bg-7iGSsb9J.jpg')] bg-cover bg-center opacity-100" />
+
+          {/* A smooth natural gradient that softly fades from solid cream on the left to totally clear on the right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#fdfbf7]/100 via-[#fdfbf7]/75 to-transparent sm:via-[#fdfbf7]/50" />
+
+          {/* A soft bottom-up fade on mobile only, just to ensure text is readable if it wraps, without blocking the main image */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#fdfbf7]/80 via-transparent to-transparent md:hidden" />
+        </div>
+
         {/* Geometric accent */}
-        <div className="hidden lg:block absolute right-[5%] top-[10%] w-[480px] h-[480px] border border-gold/20 rounded-full pointer-events-none" />
-        <div className="hidden lg:block absolute right-[7%] top-[12%] w-[420px] h-[420px] border border-gold/10 rounded-full pointer-events-none" />
+        <div className="hidden lg:block absolute right-[5%] top-[10%] w-[480px] h-[480px] border border-gold/40 rounded-full pointer-events-none z-0 mix-blend-overlay" />
+        <div className="hidden lg:block absolute right-[7%] top-[12%] w-[420px] h-[420px] border border-gold/20 rounded-full pointer-events-none z-0 mix-blend-overlay" />
 
         <div className="relative z-10 px-6 md:px-20 max-w-[800px] mx-auto lg:ml-[10%] text-left">
           <div className="fade-in-up flex items-center gap-2 mb-5">
             <div className="w-8 h-[1px] bg-gold" />
             <span className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase">Premium Marketplace</span>
           </div>
-          <h1 className="fade-in-up delay-1 font-playfair text-4xl md:text-6xl lg:text-[5rem] leading-[1.1] font-bold text-charcoal mb-5">
+          <h1 className="fade-in-up delay-1 font-playfair text-4xl md:text-6xl lg:text-[4rem] leading-[1.1] font-bold text-charcoal mb-5">
             Where Luxury<br />
             <span className="text-gold italic">Finds</span> a Home.
           </h1>
@@ -76,7 +86,7 @@ export default function HomePage() {
               Explore Collection <ArrowForwardIcon sx={{ fontSize: 18 }} />
             </button>
             <button onClick={() => navigate('/about')}
-              className="bg-white border-[1.5px] border-charcoal text-charcoal font-inter text-sm md:text-[0.92rem] font-semibold px-7 py-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-charcoal hover:text-white hover:-translate-y-1 hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] flex items-center justify-center">
+              className="bg-white border-[1.5px] border-gold text-charcoal font-inter text-sm md:text-[0.92rem] font-semibold px-7 py-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-charcoal hover:text-white hover:-translate-y-1 hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] flex items-center justify-center">
               Our Story
             </button>
           </div>

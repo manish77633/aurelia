@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -17,12 +17,15 @@ import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 const TABS = ['Dashboard', 'Products', 'Orders', 'Users'];
 const CATS = ['Luxury Watches', 'Designer Bags', 'Premium Shoes', 'Exclusive Apparel'];
-const IMG_METHODS = ['URL', 'Upload'];
 
-const EMPTY_FORM = { name: '', description: '', price: '', category: 'Luxury Watches', colors: '', countInStock: '', featured: false, image: '' };
+const EMPTY_FORM = { name: '', description: '', price: '', category: 'Luxury Watches', colors: '', countInStock: '', featured: false };
 
 export default function AdminPage() {
   const { user } = useSelector(s => s.auth);
@@ -37,10 +40,15 @@ export default function AdminPage() {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
   const [editId, setEditId] = useState(null);
-  const [imgMethod, setImgMethod] = useState('URL');
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
+  // Multi-image state
+  const [imageFiles, setImageFiles] = useState([]); // File objects for upload
+  const [imagePreviews, setImagePreviews] = useState([]); // { src, type:'file'|'url', file?:File, url?:string }
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [urlInput, setUrlInput] = useState('');
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [dragIdx, setDragIdx] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [descLoading, setDescLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [mobileTabOpen, setMobileTabOpen] = useState(false);
   const fileRef = useRef();
@@ -71,42 +79,134 @@ export default function AdminPage() {
     if (users.length === 0) fetchUsers();
   }, [tab]);
 
+  // ── Multi-image helpers ──────────────────────────────────────
+  const addFiles = useCallback((files) => {
+    const newPreviews = [];
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews(prev => {
+          if (prev.length >= 10) { toast.warning('Max 10 images'); return prev; }
+          return [...prev, { src: reader.result, type: 'file', file }];
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setImagePreview(reader.result);
-    reader.readAsDataURL(file);
+    if (e.target.files) addFiles(e.target.files);
+    e.target.value = '';
   };
 
-  const resetForm = () => { setForm(EMPTY_FORM); setEditId(null); setImageFile(null); setImagePreview(''); setImgMethod('URL'); };
+  const addUrlImage = () => {
+    const url = urlInput.trim();
+    if (!url) return;
+    if (imagePreviews.length >= 10) { toast.warning('Max 10 images'); return; }
+    setImagePreviews(prev => [...prev, { src: url, type: 'url', url }]);
+    setUrlInput('');
+  };
+
+  const removeImage = (idx) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== idx));
+    setMainImageIndex(prev => {
+      if (idx === prev) return 0;
+      if (idx < prev) return prev - 1;
+      return prev;
+    });
+  };
+
+  // Drag to reorder
+  const handleDragStart = (idx) => setDragIdx(idx);
+  const handleDragOver = (e, idx) => { e.preventDefault(); };
+  const handleDrop = (e, dropIdx) => {
+    e.preventDefault();
+    if (dragIdx === null || dragIdx === dropIdx) return;
+    setImagePreviews(prev => {
+      const arr = [...prev];
+      const [moved] = arr.splice(dragIdx, 1);
+      arr.splice(dropIdx, 0, moved);
+      return arr;
+    });
+    // Update mainImageIndex if it was affected
+    setMainImageIndex(prev => {
+      if (prev === dragIdx) return dropIdx;
+      if (dragIdx < prev && dropIdx >= prev) return prev - 1;
+      if (dragIdx > prev && dropIdx <= prev) return prev + 1;
+      return prev;
+    });
+    setDragIdx(null);
+  };
+
+  // Drop zone handlers
+  const onDropZone = (e) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
+  };
+  const onDragEnter = (e) => { e.preventDefault(); setIsDraggingOver(true); };
+  const onDragLeave = (e) => { e.preventDefault(); setIsDraggingOver(false); };
+
+  const resetForm = () => {
+    setForm(EMPTY_FORM); setEditId(null);
+    setImagePreviews([]); setMainImageIndex(0);
+    setUrlInput(''); setImageFiles([]);
+  };
+
+  const handleGenerateDesc = async () => {
+    if (!form.name) { toast.error('Enter a product name first'); return; }
+    setDescLoading(true);
+    try {
+      const { data } = await axios.post(`${API}/admin/generate-description`,
+        { productName: form.name, category: form.category },
+        { headers });
+      setForm(f => ({ ...f, description: data.description }));
+      toast.success('✨ Description generated!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'AI generation failed. Check your GEMINI_API_KEY.');
+    }
+    setDescLoading(false);
+  };
 
   const handleSubmit = async () => {
     if (!form.name || !form.price || !form.category) { toast.error('Name, price, category required'); return; }
-    if (imgMethod === 'URL' && !form.image) { toast.error('Image URL required'); return; }
-    if (imgMethod === 'Upload' && !imageFile && !editId) { toast.error('Please select an image file'); return; }
+    if (imagePreviews.length === 0 && !editId) { toast.error('Please add at least one image'); return; }
     setLoading(true);
     try {
-      let formData;
-      if (imgMethod === 'Upload' && imageFile) {
-        formData = new FormData();
-        Object.entries(form).forEach(([k, v]) => { if (k !== 'image') formData.append(k, v); });
-        formData.append('image', imageFile);
+      const hasFiles = imagePreviews.some(p => p.type === 'file');
+      const urlImages = imagePreviews.filter(p => p.type === 'url').map(p => p.url);
+      const existingImgs = imagePreviews.filter(p => p.type === 'existing').map(p => p.url);
+
+      let payload;
+      let config;
+
+      if (hasFiles) {
+        payload = new FormData();
+        Object.entries(form).forEach(([k, v]) => payload.append(k, v));
+        // Append file images in order
+        imagePreviews.forEach(p => {
+          if (p.type === 'file' && p.file) payload.append('images', p.file);
+        });
+        if (urlImages.length > 0) payload.append('imageUrls', JSON.stringify(urlImages));
+        if (existingImgs.length > 0) payload.append('existingImages', JSON.stringify(existingImgs));
+        payload.append('mainImageIndex', String(mainImageIndex));
+        config = { headers: { ...headers, 'Content-Type': 'multipart/form-data' } };
       } else {
-        formData = form;
+        payload = {
+          ...form,
+          imageUrls: JSON.stringify(urlImages),
+          existingImages: JSON.stringify(existingImgs),
+          mainImageIndex: String(mainImageIndex),
+        };
+        config = { headers: { ...headers, 'Content-Type': 'application/json' } };
       }
-      const config = {
-        headers: {
-          ...headers,
-          ...(imgMethod === 'Upload' && imageFile ? { 'Content-Type': 'multipart/form-data' } : { 'Content-Type': 'application/json' }),
-        },
-      };
+
       if (editId) {
-        await axios.put(`${API}/products/${editId}`, formData, config);
+        await axios.put(`${API}/products/${editId}`, payload, config);
         toast.success('Product updated ✨');
       } else {
-        await axios.post(`${API}/products`, formData, config);
+        await axios.post(`${API}/products`, payload, config);
         toast.success('Product added 🎉');
       }
       resetForm(); fetchProducts();
@@ -117,8 +217,18 @@ export default function AdminPage() {
   };
 
   const handleEdit = (p) => {
-    setForm({ name: p.name, description: p.description, price: p.price, category: p.category, colors: (p.colors || []).join(', '), countInStock: p.countInStock, featured: p.featured, image: p.image });
-    setImagePreview(p.image); setImgMethod('URL'); setEditId(p._id);
+    setForm({ name: p.name, description: p.description, price: p.price, category: p.category, colors: (p.colors || []).join(', '), countInStock: p.countInStock, featured: p.featured });
+    // Load existing images
+    const imgs = (p.images && p.images.length > 0) ? p.images : (p.image ? [p.image] : []);
+    const previews = imgs.map(url => ({
+      src: url.startsWith('/uploads') ? `${API.replace('/api', '')}${url}` : url,
+      type: 'existing',
+      url,
+    }));
+    setImagePreviews(previews);
+    const mi = imgs.indexOf(p.image);
+    setMainImageIndex(mi >= 0 ? mi : 0);
+    setEditId(p._id);
     setTab('Products'); window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -147,8 +257,13 @@ export default function AdminPage() {
   const statusColors = (status) => {
     if (status === 'Delivered') return { bg: '#dcfce7', color: '#166534' };
     if (status === 'Shipped') return { bg: '#dbeafe', color: '#1d4ed8' };
+    if (status === 'Confirmed') return { bg: '#e0f2fe', color: '#0369a1' };
+    if (status === 'Out for Delivery') return { bg: '#f3e8ff', color: '#7c3aed' };
+    if (status === 'Cancelled') return { bg: '#fef2f2', color: '#b91c1c' };
     return { bg: '#fef9ec', color: '#92400e' };
   };
+
+  const ORDER_STATUSES = ['Processing', 'Confirmed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
@@ -192,8 +307,8 @@ export default function AdminPage() {
                 { Icon: PeopleOutlineIcon, label: 'Total Users', value: stats.totalUsers || 0, color: '#6366f1', target: 'Users' },
                 { Icon: InventoryOutlinedIcon, label: 'Products', value: stats.totalProducts || 0, color: '#CFA052', target: 'Products' },
                 { Icon: ShoppingBagOutlinedIcon, label: 'Orders', value: stats.totalOrders || 0, color: '#10b981', target: 'Orders' },
-                { Icon: AttachMoneyIcon, label: 'Revenue', value: `$${(stats.totalRevenue || 0).toLocaleString()}`, color: '#f59e0b', target: 'Dashboard' },
-              ].map(({ Icon, label, value, color, target }) => (
+                { Icon: AttachMoneyIcon, label: 'Revenue', value: `$${(stats.totalRevenue || 0).toLocaleString()}`, color: '#f59e0b', target: 'Dashboard', subtitle: stats.codPendingRevenue ? `+$${stats.codPendingRevenue.toLocaleString()} COD pending` : null },
+              ].map(({ Icon, label, value, color, target, subtitle }) => (
                 <div
                   key={label}
                   onClick={() => setTab(target)}
@@ -205,6 +320,7 @@ export default function AdminPage() {
                   </div>
                   <div className="font-playfair text-2xl sm:text-3xl font-bold text-[#1A1A1A] break-all">{value}</div>
                   <div className="text-[0.78rem] text-[#9CA3AF] mt-1">{label}</div>
+                  {subtitle && <div className="text-[0.65rem] text-[#CFA052] font-semibold mt-0.5">{subtitle}</div>}
                 </div>
               ))}
             </div>
@@ -278,7 +394,24 @@ export default function AdminPage() {
 
                 {/* Description */}
                 <div className="sm:col-span-2 lg:col-span-1">
-                  <label className={lbl}>Description</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className={lbl} style={{ margin: 0 }}>Description</label>
+                    <button
+                      onClick={handleGenerateDesc}
+                      disabled={descLoading}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.72rem] font-bold cursor-pointer border-none transition-all duration-200"
+                      style={{
+                        background: descLoading ? '#f5f0e8' : 'linear-gradient(135deg, #CFA052, #E8C97A)',
+                        color: descLoading ? '#9CA3AF' : '#fff',
+                        boxShadow: descLoading ? 'none' : '0 2px 12px rgba(207,160,82,0.35)',
+                      }}
+                      title="Auto-generate with AI"
+                    >
+                      {descLoading
+                        ? <><span style={{ display: 'inline-block', width: 12, height: 12, border: '2px solid #CFA052', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} /> Generating...</>
+                        : <><AutoFixHighIcon sx={{ fontSize: 14 }} /> ✨ Auto-Generate</>}
+                    </button>
+                  </div>
                   <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} placeholder="Luxury product description..." className={`${inp} resize-vertical`} />
                 </div>
               </div>
@@ -298,49 +431,100 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              {/* IMAGE METHOD TABS */}
+              {/* ── MULTI-IMAGE SECTION ────────────────── */}
               <div className="mb-4">
-                <label className={lbl}>Product Image</label>
-                <div className="flex bg-[#f5f0e8] rounded-xl p-1 mb-3.5">
-                  {IMG_METHODS.map(m => (
-                    <button
-                      key={m}
-                      onClick={() => { setImgMethod(m); setImageFile(null); setImagePreview(m === 'URL' ? form.image : ''); }}
-                      className="flex-1 py-2 border-none rounded-lg font-inter text-[0.82rem] font-bold cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-200"
-                      style={{ background: imgMethod === m ? '#CFA052' : 'transparent', color: imgMethod === m ? '#fff' : '#6B7280' }}
-                    >
-                      {m === 'URL' ? <LinkIcon sx={{ fontSize: 14 }} /> : <CloudUploadOutlinedIcon sx={{ fontSize: 14 }} />} {m}
-                    </button>
-                  ))}
+                <label className={lbl}>Product Images <span className="text-[#9CA3AF] font-normal normal-case tracking-normal">(up to 10, ★ = main)</span></label>
+
+                {/* Drop zone */}
+                <div
+                  onDrop={onDropZone}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDragEnter={onDragEnter}
+                  onDragLeave={onDragLeave}
+                  onClick={() => fileRef.current.click()}
+                  className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all duration-300 mb-3 ${isDraggingOver
+                    ? 'border-[#CFA052] bg-[#fef9ec] scale-[1.01]'
+                    : 'border-[#e8e0d6] bg-[#FAFAFA] hover:border-[#CFA052]'
+                    }`}
+                >
+                  <CloudUploadOutlinedIcon sx={{ fontSize: 28, color: isDraggingOver ? '#CFA052' : '#9CA3AF' }} />
+                  <div className="text-[0.82rem] font-semibold text-[#6B7280] mt-1.5">Drag & drop images here or click to browse</div>
+                  <div className="text-[0.72rem] text-[#9CA3AF] mt-0.5">PNG, JPG, WEBP • Max 10 images</div>
+                  <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFileChange} />
                 </div>
 
-                {imgMethod === 'URL' ? (
+                {/* URL input */}
+                <div className="flex gap-2 mb-3">
                   <input
                     type="text"
-                    placeholder="https://images.unsplash.com/..."
-                    value={form.image}
-                    onChange={e => { setForm({ ...form, image: e.target.value }); setImagePreview(e.target.value); }}
-                    className={inp}
+                    placeholder="Or paste image URL..."
+                    value={urlInput}
+                    onChange={e => setUrlInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addUrlImage()}
+                    className={`${inp} flex-1`}
                   />
-                ) : (
-                  <div
-                    onClick={() => fileRef.current.click()}
-                    className="border-2 border-dashed border-[#e8e0d6] rounded-xl p-7 text-center cursor-pointer transition-all duration-200 bg-[#FAFAFA] hover:border-[#CFA052]"
+                  <button
+                    onClick={addUrlImage}
+                    className="px-3 py-2 bg-[#f5f0e8] border-[1.5px] border-[#e8e0d6] rounded-[10px] font-inter text-[0.8rem] font-bold text-[#CFA052] cursor-pointer hover:bg-[#CFA052] hover:text-white hover:border-[#CFA052] transition-all duration-200"
                   >
-                    <AddPhotoAlternateOutlinedIcon sx={{ fontSize: 32, color: '#CFA052' }} />
-                    <div className="text-[0.85rem] font-semibold text-[#6B7280] mt-2">{imageFile ? imageFile.name : 'Click to upload image'}</div>
-                    <div className="text-[0.75rem] text-[#9CA3AF] mt-1">PNG, JPG, WEBP up to 5MB</div>
-                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                    <LinkIcon sx={{ fontSize: 16 }} />
+                  </button>
+                </div>
+
+                {/* Image grid */}
+                {imagePreviews.length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-2">
+                    {imagePreviews.map((img, idx) => (
+                      <div
+                        key={idx}
+                        draggable
+                        onDragStart={() => handleDragStart(idx)}
+                        onDragOver={(e) => handleDragOver(e, idx)}
+                        onDrop={(e) => handleDrop(e, idx)}
+                        className={`relative group rounded-xl overflow-hidden aspect-square bg-[#f5ede0] border-2 transition-all duration-200 cursor-grab active:cursor-grabbing ${mainImageIndex === idx
+                          ? 'border-[#CFA052] shadow-[0_0_0_2px_rgba(207,160,82,0.3)]'
+                          : 'border-transparent hover:border-[#e8e0d6]'
+                          }`}
+                      >
+                        <img src={img.src} alt={`preview-${idx}`} className="w-full h-full object-cover" onError={e => e.target.style.opacity = '0.3'} />
+
+                        {/* Drag handle */}
+                        <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <DragIndicatorIcon sx={{ fontSize: 16, color: '#fff', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }} />
+                        </div>
+
+                        {/* Main image star */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setMainImageIndex(idx); }}
+                          className="absolute top-1 right-1 bg-black/40 backdrop-blur-sm rounded-full w-6 h-6 flex items-center justify-center border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-[#CFA052]"
+                          title={mainImageIndex === idx ? 'Main image' : 'Set as main image'}
+                        >
+                          {mainImageIndex === idx
+                            ? <StarIcon sx={{ fontSize: 14, color: '#FFD700' }} />
+                            : <StarBorderIcon sx={{ fontSize: 14, color: '#fff' }} />
+                          }
+                        </button>
+
+                        {/* Remove button */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); removeImage(idx); }}
+                          className="absolute bottom-1 right-1 bg-red-500/80 backdrop-blur-sm rounded-full w-5 h-5 flex items-center justify-center border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600"
+                        >
+                          <CloseIcon sx={{ fontSize: 12, color: '#fff' }} />
+                        </button>
+
+                        {/* Main badge */}
+                        {mainImageIndex === idx && (
+                          <div className="absolute bottom-1 left-1 bg-[#CFA052] text-white text-[0.55rem] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wide">Main</div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
 
-                {/* Preview */}
-                {imagePreview && (
-                  <div className="mt-3 rounded-xl overflow-hidden h-36 bg-[#f5ede0] relative">
-                    <img src={imagePreview} alt="preview" className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
-                    <div className="absolute top-1.5 right-1.5 bg-[#10b981] rounded-full w-5 h-5 flex items-center justify-center">
-                      <CheckCircleOutlinedIcon sx={{ fontSize: 14, color: '#fff' }} />
-                    </div>
+                {imagePreviews.length > 0 && (
+                  <div className="text-[0.72rem] text-[#9CA3AF] mt-2 text-center">
+                    {imagePreviews.length}/10 images • Drag to reorder • ★ Star to set main image
                   </div>
                 )}
               </div>
@@ -417,7 +601,7 @@ export default function AdminPage() {
                       onChange={e => updateOrderStatus(o._id, e.target.value)}
                       className="w-full px-3 py-2 border-[1.5px] border-[#e8e0d6] rounded-xl text-[0.85rem] cursor-pointer font-inter bg-[#FAFAFA] outline-none focus:border-[#CFA052]"
                     >
-                      {['Processing', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'].map(s => <option key={s}>{s}</option>)}
+                      {ORDER_STATUSES.map(s => <option key={s}>{s}</option>)}
                     </select>
                   </div>
                 );
@@ -455,7 +639,7 @@ export default function AdminPage() {
                             onChange={e => updateOrderStatus(o._id, e.target.value)}
                             className="px-2.5 py-1.5 border-[1.5px] border-[#e8e0d6] rounded-lg text-[0.8rem] cursor-pointer font-inter bg-white outline-none"
                           >
-                            {['Processing', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'].map(s => <option key={s}>{s}</option>)}
+                            {ORDER_STATUSES.map(s => <option key={s}>{s}</option>)}
                           </select>
                         </td>
                       </tr>
