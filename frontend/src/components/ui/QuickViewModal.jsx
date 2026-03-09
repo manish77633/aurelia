@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -14,6 +14,11 @@ export default function QuickViewModal({ product, onClose }) {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { user } = useSelector(s => s.auth);
+	const [activeImage, setActiveImage] = useState(product?.image || '');
+
+	useEffect(() => {
+		if (product) setActiveImage(product.image);
+	}, [product]);
 
 	if (!product) return null;
 
@@ -24,9 +29,7 @@ export default function QuickViewModal({ product, onClose }) {
 		onClose();
 	};
 
-	const imgSrc = product.image?.startsWith('/uploads')
-		? `${process.env.REACT_APP_API_URL.replace('/api', '')}${product.image}`
-		: product.image;
+
 
 	return (
 		<div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[2000] flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
@@ -39,8 +42,27 @@ export default function QuickViewModal({ product, onClose }) {
 				</button>
 
 				{/* Image Grid */}
-				<div className="md:w-1/2 h-[350px] md:h-full bg-[#f5ede0] overflow-hidden">
-					<img src={imgSrc} alt={product.name} className="w-full h-full object-cover" />
+				<div className="md:w-1/2 h-[350px] md:h-full bg-[#f5ede0] overflow-hidden flex flex-col">
+					<div className="flex-1 overflow-hidden relative">
+						<img
+							src={activeImage?.startsWith('/uploads') ? `${process.env.REACT_APP_API_URL.replace('/api', '')}${activeImage}` : activeImage}
+							alt={product.name}
+							className="w-full h-full object-cover"
+						/>
+					</div>
+					{product.images?.length > 1 && (
+						<div className="h-20 bg-white/50 backdrop-blur-sm flex items-center gap-2 px-4 border-t border-gray-100 overflow-x-auto custom-scrollbar">
+							{product.images.map((img, idx) => (
+								<div
+									key={idx}
+									onClick={() => setActiveImage(img)}
+									className={`h-14 w-14 shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${activeImage === img ? 'border-gold scale-95' : 'border-transparent opacity-60 hover:opacity-100'}`}
+								>
+									<img src={img.startsWith('/uploads') ? `${process.env.REACT_APP_API_URL.replace('/api', '')}${img}` : img} alt="thumb" className="w-full h-full object-cover" />
+								</div>
+							))}
+						</div>
+					)}
 				</div>
 
 				{/* Details */}

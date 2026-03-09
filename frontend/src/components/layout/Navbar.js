@@ -17,6 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -27,6 +28,8 @@ export default function Navbar() {
   const { items: wishItems } = useSelector((s) => s.wishlist);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [navSearch, setNavSearch] = useState('');
 
   // Filter items to ensure product actually exists, avoiding counting deleted products
   const validCartItems = cartItems.filter(i => i.product);
@@ -39,10 +42,21 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // Close mobile menu and search on route change
   useEffect(() => {
     setMobileOpen(false);
+    setIsSearchOpen(false);
+    setNavSearch('');
   }, [location.pathname]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (navSearch.trim()) {
+      navigate(`/shop?keyword=${encodeURIComponent(navSearch.trim())}`);
+      setIsSearchOpen(false);
+      setNavSearch('');
+    }
+  };
 
   const handleLogout = () => {
     dispatch(logout()); dispatch(resetCart()); dispatch(resetWishlist());
@@ -146,6 +160,7 @@ export default function Navbar() {
                   <div className="text-[0.7rem] font-bold tracking-[3px] text-gold uppercase mb-5">Accessories</div>
                   <div className="flex flex-col gap-3">
                     <Link to="/shop?gender=Women&subCategory=Women Watch" className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">Watches</Link>
+                    <Link to="/shop?gender=Women&subCategory=Women Bag" className="text-charcoal hover:text-gold text-[0.9rem] transition-colors">Bags</Link>
                   </div>
                 </div>
                 <div className="bg-cream rounded-2xl p-6 flex flex-col justify-end relative overflow-hidden group/img">
@@ -169,6 +184,29 @@ export default function Navbar() {
 
         {/* DESKTOP RIGHT ACTIONS */}
         <div className="hidden md:flex items-center gap-2">
+          {/* Search Box */}
+          <div className="relative flex items-center h-full mr-2">
+            <form
+              onSubmit={handleSearchSubmit}
+              className={`flex items-center bg-[#f5f0e8] rounded-full transition-all duration-300 overflow-hidden ${isSearchOpen ? 'w-[200px] border border-gold/30 px-3' : 'w-[40px] px-0 justify-center cursor-pointer hover:bg-gold/10 hover:text-gold'}`}
+              onClick={() => !isSearchOpen && setIsSearchOpen(true)}
+            >
+              <SearchIcon
+                sx={{ fontSize: 20, color: isSearchOpen ? '#CFA052' : '#6B7280' }}
+                className="shrink-0"
+              />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={navSearch}
+                onChange={e => setNavSearch(e.target.value)}
+                autoFocus={isSearchOpen}
+                onBlur={() => !navSearch && setIsSearchOpen(false)}
+                className={`border-none bg-transparent h-9 text-[0.85rem] font-inter outline-none transition-all duration-300 ${isSearchOpen ? 'w-full ml-2 opacity-100' : 'w-0 opacity-0'}`}
+              />
+            </form>
+          </div>
+
           {user ? (
             <>
               {/* Wishlist */}
@@ -212,7 +250,21 @@ export default function Navbar() {
 
       {/* MOBILE OVERLAY MENU — outside <nav> so it's not clipped */}
       <div className={`fixed inset-0 bg-white z-[999] flex flex-col pt-[70px] md:hidden transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex flex-col px-6 pt-8 pb-6 overflow-y-auto h-full">
+        <div className="flex flex-col px-6 pt-5 pb-6 overflow-y-auto h-full">
+          {/* Mobile Search */}
+          <form onSubmit={handleSearchSubmit} className="mb-6">
+            <div className="relative">
+              <SearchIcon sx={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF', fontSize: 18 }} />
+              <input
+                type="text"
+                placeholder="Search items..."
+                value={navSearch}
+                onChange={e => setNavSearch(e.target.value)}
+                className="w-full py-3 pr-4 pl-11 border border-[#e8e0d6] rounded-xl font-inter text-[0.9rem] bg-[#FAFAFA] outline-none focus:border-gold transition-colors"
+              />
+            </div>
+          </form>
+
           {/* Nav Links */}
           <div className="flex flex-col gap-1 mb-8">
             {[

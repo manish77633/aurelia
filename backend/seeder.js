@@ -90,7 +90,104 @@ const products = [
   { name: "Petite Pearl Watch", description: "Mother of pearl dial.", price: 1250, category: "Accessories", subCategory: "Women Watch", gender: "Women", colors: ["White Pearl"], image: "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?w=800&q=80", countInStock: 9 },
   { name: "Celestial Charm", description: "Night sky dial, starry strap.", price: 1800, category: "Accessories", subCategory: "Women Watch", gender: "Women", colors: ["Midnight Blue"], image: "https://images.unsplash.com/photo-1508685096489-77a5ad2ba674?w=800&q=80", countInStock: 4 },
   { name: "Grace Bangle Watch", description: "Jewlery and timepiece hybrid.", price: 950, category: "Accessories", subCategory: "Women Watch", gender: "Women", colors: ["Silver"], image: "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?w=800&q=80", countInStock: 12 },
-  { name: "The Emerald Heirloom", description: "Emerald cut glass, classic link.", price: 3200, category: "Accessories", subCategory: "Women Watch", gender: "Women", colors: ["Gold/Green"], image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80", countInStock: 2 }
+  { name: "The Emerald Heirloom", description: "Emerald cut glass, classic link.", price: 3200, category: "Accessories", subCategory: "Women Watch", gender: "Women", colors: ["Gold/Green"], image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80", countInStock: 2 },
+
+  // ─── WOMEN BAGS ──────────────────────────────────────────
+  {
+    name: "Marchesa Velvet Tote",
+    description: "An exquisite velvet tote featuring hand-stitched detailing and a spacious silk-lined interior. Perfect for adding a touch of Victorian elegance to your evening ensemble.",
+    price: 850,
+    category: "Accessories",
+    subCategory: "Women Bag",
+    gender: "Women",
+    colors: ["Burgundy", "Emerald", "Midnight Black"],
+    countInStock: 12,
+    featured: true,
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1000&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1591561911629-cfa840cd947c?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566150905458-1bf1fd113961?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop"
+    ]
+  },
+  {
+    name: "Siena Pebbled Leather Crossbody",
+    description: "Crafted from premium Italian pebbled leather, this versatile crossbody offers a sleek silhouette with adjustable gold-tone hardware for the modern woman on the go.",
+    price: 420,
+    category: "Accessories",
+    subCategory: "Women Bag",
+    gender: "Women",
+    colors: ["Tan", "Cream", "Sage"],
+    countInStock: 25,
+    featured: false,
+    image: "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?q=80&w=1000&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1523779105320-d1cd346ff52b?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=1000&auto=format&fit=crop"
+    ]
+  },
+  {
+    name: "Valencia Structured Satchel",
+    description: "The Valencia defines sophistication with its sharp lines and robust top-handle architecture. Finished with a protective lacquer for a timeless glossy sheen.",
+    price: 1200,
+    category: "Accessories",
+    subCategory: "Women Bag",
+    gender: "Women",
+    colors: ["Ivory", "Cognac", "Navy"],
+    countInStock: 8,
+    featured: true,
+    image: "https://images.unsplash.com/photo-1591348113527-71631b32ba3a?q=80&w=1000&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1591348113527-71631b32ba3a?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1575032617751-6ddec2089882?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614179677232-2519b3090757?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1564424555153-04228f0cb265?q=80&w=1000&auto=format&fit=crop"
+    ]
+  },
+  {
+    name: "Aurora Midnight Clutch",
+    description: "A miniature masterpiece encrusted with sustainable crystals. This midnight clutch is designed to store your essentials while making a high-octane fashion statement.",
+    price: 290,
+    category: "Accessories",
+    subCategory: "Women Bag",
+    gender: "Women",
+    colors: ["Silver", "Gold", "Gunmetal"],
+    countInStock: 15,
+    featured: false,
+    image: "https://images.unsplash.com/photo-1566150902887-9679ec158bb5?q=80&w=1000&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1566150902887-9679ec158bb5?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1512201078372-9c6b2a0d528a?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1532673322-c84859068739?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511405946472-a37e3b5ccd47?q=80&w=1000&auto=format&fit=crop"
+    ]
+  },
+  {
+    name: "Isabella Quilted Shoulder Bag",
+    description: "Classic quilting meets contemporary utility. Featuring a convertible chain strap and a secure magnetic flap, the Isabella is an icon of effortless luxury.",
+    price: 680,
+    category: "Accessories",
+    subCategory: "Women Bag",
+    gender: "Women",
+    colors: ["Red Wine", "Blush", "Obsidian"],
+    countInStock: 20,
+    featured: true,
+    image: "https://images.unsplash.com/photo-1590739225287-bd26514ca929?q=80&w=1000&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1590739225287-bd26514ca929?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1591823062231-850f71be0b2e?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1572196284554-4e321b0e74aa?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1591333116972-7fcfdec5c4b3?q=80&w=1000&auto=format&fit=crop"
+    ]
+  }
 ];
 
 const seedDB = async () => {
@@ -102,17 +199,15 @@ const seedDB = async () => {
     await Product.deleteMany({});
     console.log('Products cleared.');
 
-    // Get or create an admin user to be the seller
-    let admin = await User.findOne({ role: 'admin' });
-    if (!admin) {
-      admin = await User.create({
-        name: 'Manish Kumar',
-        email: 'admin@aurelia.com',
-        password: 'admin123456',
-        role: 'admin',
-      });
-      console.log('Admin user created: admin@aurelia.com / admin123456');
-    }
+    // Ensure fresh admin user
+    await User.deleteMany({ email: 'admin@aurelia.com' });
+    const admin = await User.create({
+      name: 'Manish Kumar',
+      email: 'admin@aurelia.com',
+      password: 'admin123456',
+      role: 'admin',
+    });
+    console.log('Admin user created/refreshed: admin@aurelia.com / admin123456');
 
     // Attach seller id to all products
     const productsWithSeller = products.map((p) => ({ ...p, seller: admin._id }));

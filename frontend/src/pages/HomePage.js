@@ -1,6 +1,6 @@
 // HomePage.js replaces existing raw css inline styles with tailwind css utility classes
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../slices/productSlice';
@@ -45,6 +45,28 @@ export default function HomePage() {
   const { list: products, loading } = useSelector((s) => s.products);
   const [openFaq, setOpenFaq] = useState(null);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const pageRef = useRef(null);
+
+  // ── IntersectionObserver for scroll animations ──
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('scroll-visible');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    const elements = pageRef.current?.querySelectorAll(
+      '.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale'
+    );
+    elements?.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => { dispatch(fetchProducts({ featured: 'true' })); }, [dispatch]);
 
@@ -52,7 +74,7 @@ export default function HomePage() {
   const marqueeDbl = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
-    <div className="bg-cream min-h-screen">
+    <div className="bg-cream min-h-screen" ref={pageRef}>
 
       {/* ── HERO ─────────────────────────────────────── */}
       <section className="relative min-h-[calc(100vh-70px)] flex items-center overflow-hidden bg-[#fdfbf7] pt-16 md:pt-0">
@@ -115,7 +137,7 @@ export default function HomePage() {
             { Icon: DiamondOutlinedIcon, title: 'Premium Quality', desc: 'Only the finest materials and craft' },
             { Icon: SupportAgentIcon, title: '24/7 Concierge', desc: 'White-glove support at every step' },
           ].map(({ Icon, title, desc }, i) => (
-            <div key={i} className={`fade-in-up delay-${i + 1} text-center px-4 py-6 md:p-7 rounded-2xl border border-gold/10 bg-cream transition-all duration-300 hover:bg-white hover:shadow-[0_8px_32px_rgba(207,160,82,0.12)] hover:border-gold/30`}>
+            <div key={i} className={`scroll-animate delay-${i + 1} text-center px-4 py-6 md:p-7 rounded-2xl border border-gold/10 bg-cream transition-all duration-300 hover:bg-white hover:shadow-[0_8px_32px_rgba(207,160,82,0.12)] hover:border-gold/30`}>
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#CFA052] to-[#E8C97A] flex items-center justify-center mx-auto mb-4">
                 <Icon sx={{ fontSize: 24, color: '#fff' }} />
               </div>
@@ -130,9 +152,9 @@ export default function HomePage() {
       <section className="py-12 md:py-16 px-6 md:px-12 bg-cream">
         <div className="max-w-[1280px] mx-auto">
           <div className="text-center mb-10 md:mb-12">
-            <span className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-2">Featured</span>
-            <h2 className="font-playfair text-3xl md:text-5xl font-bold text-charcoal mb-4">Curated for You</h2>
-            <p className="text-sm md:text-[0.92rem] text-gray-500 max-w-[440px] mx-auto">An exquisite selection of our finest pieces, handpicked by our in-house curators.</p>
+            <span className="scroll-animate text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-2">Featured</span>
+            <h2 className="scroll-animate delay-1 font-playfair text-3xl md:text-5xl font-bold text-charcoal mb-4">Curated for You</h2>
+            <p className="scroll-animate delay-2 text-sm md:text-[0.92rem] text-gray-500 max-w-[440px] mx-auto">An exquisite selection of our finest pieces, handpicked by our in-house curators.</p>
           </div>
           {loading ? <Loader /> : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -150,8 +172,8 @@ export default function HomePage() {
       {/* ── TESTIMONIALS ─────────────────────────────── */}
       <section className="bg-[#fdfbf7] py-16 md:py-20 overflow-hidden">
         <div className="max-w-[1100px] mx-auto text-center mb-10 md:mb-12 px-6">
-          <span className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase">Testimonials</span>
-          <h2 className="font-playfair text-3xl md:text-4xl font-bold text-charcoal mt-3">Voice of Aurelia</h2>
+          <span className="scroll-animate text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase">Testimonials</span>
+          <h2 className="scroll-animate delay-1 font-playfair text-3xl md:text-4xl font-bold text-charcoal mt-3">Voice of Aurelia</h2>
         </div>
         <div className="marquee-testimonials-container mt-4">
           <div className="marquee-testimonials-track">
@@ -187,11 +209,11 @@ export default function HomePage() {
       <section className="py-16 md:py-20 px-6 md:px-12 bg-white">
         <div className="max-w-[780px] mx-auto">
           <div className="text-center mb-10 md:mb-12">
-            <span className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-3">Support</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-charcoal">Frequently Asked Questions</h2>
+            <span className="scroll-animate text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-3">Support</span>
+            <h2 className="scroll-animate delay-1 font-playfair text-3xl md:text-4xl font-bold text-charcoal">Frequently Asked Questions</h2>
           </div>
           {FAQ.map((item, i) => (
-            <div key={i} className="border-b border-[#f0ebe3] overflow-hidden">
+            <div key={i} className={`scroll-animate delay-${i % 4 + 1} border-b border-[#f0ebe3] overflow-hidden`}>
               <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full bg-transparent border-none flex items-center justify-between py-5 cursor-pointer text-left focus:outline-none">
                 <span className="font-playfair text-[0.95rem] md:text-base font-semibold text-charcoal pr-5">{item.q}</span>

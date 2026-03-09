@@ -15,16 +15,27 @@ export default function AdminLoginPage() {
 
 	const handleAdminVerify = (e) => {
 		e.preventDefault();
-		// In a real app, you'd call a backend verify endpoint.
-		// Here, for "quick" and "secure" feel, we verify against current user email 
-		// and a specific admin master password or just the standard login flow.
-		// User asked to "ask for id pas".
-		if (email === user?.email && password === 'admin123456') {
+
+		if (!user) {
+			toast.error('You must be logged in to access this area.');
+			navigate('/login');
+			return;
+		}
+
+		if (user.role !== 'admin') {
+			toast.error('Access Denied: You do not have administrator privileges.');
+			return;
+		}
+
+		// Verify that the email matches the logged-in user and the master password is correct
+		if (email.toLowerCase() === user.email.toLowerCase() && password === 'admin123456') {
 			dispatch(setAdminVerified(true));
 			toast.success('Admin Dashboard Access Granted');
 			navigate('/admin');
+		} else if (password !== 'admin123456') {
+			toast.error('Invalid Master Password');
 		} else {
-			toast.error('Invalid Credentials or Unauthorized Access');
+			toast.error('Email does not match your logged-in account');
 		}
 	};
 

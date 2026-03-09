@@ -74,9 +74,20 @@ export default function Chatbot() {
 			if (i + 1 < parts.length) {
 				const linkText = parts[i + 1];
 				const url = parts[i + 2];
-				if (url.startsWith('/')) {
+				const isProductLink = url.includes('/product/');
+				const isInternal = url.startsWith('/') || url.includes(window.location.host);
+
+				if (isInternal || isProductLink) {
+					// Extract relative path if it's a full URL
+					let internalPath = url;
+					if (url.includes(window.location.host)) {
+						internalPath = url.split(window.location.host)[1] || '/';
+					} else if (isProductLink && !url.startsWith('/')) {
+						internalPath = '/product/' + url.split('/product/')[1];
+					}
+
 					elements.push(
-						<Link key={`link-${i}`} to={url} style={{ color: 'inherit', textDecoration: 'underline', fontWeight: 600 }}>
+						<Link key={`link-${i}`} to={internalPath} style={{ color: 'inherit', textDecoration: 'underline', fontWeight: 600 }}>
 							{linkText}
 						</Link>
 					);

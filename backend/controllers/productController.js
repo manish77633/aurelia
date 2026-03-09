@@ -21,7 +21,39 @@ const streamUpload = (buffer) => {
 const getProducts = asyncHandler(async (req, res) => {
   const { keyword, category, color, minPrice, maxPrice, sort, featured, gender, subCategory, page = 1, limit = 12 } = req.query;
   const query = {};
-  if (keyword) query.name = { $regex: keyword, $options: 'i' };
+  if (keyword) {
+    const k = keyword.trim().toLowerCase();
+
+    // Broad Category Aliases: only if search is a single broad word
+    const broadFootwear = ['shoe', 'shoes', 'footwear'].includes(k);
+    const broadApparel = ['shirt', 'tshirt', 't-shirt', 'apparel', 'clothing'].includes(k);
+    const broadAccessory = ['bag', 'bags', 'watch', 'watches', 'accessory', 'accessories'].includes(k);
+
+    if (broadFootwear) {
+      query.category = 'Footwear';
+    } else if (broadApparel) {
+      query.category = 'Apparel';
+    } else if (broadAccessory) {
+      query.category = 'Accessories';
+    } else {
+      // Advanced Search: match any word in name, category, or subCategory
+      const words = k.split(' ').filter(w => w.length > 1);
+      const searchRegex = words.map(w => ({
+        $or: [
+          { name: { $regex: w, $options: 'i' } },
+          { category: { $regex: w, $options: 'i' } },
+          { subCategory: { $regex: w, $options: 'i' } },
+          { description: { $regex: w, $options: 'i' } },
+        ]
+      }));
+
+      if (searchRegex.length > 0) {
+        query.$and = searchRegex;
+      } else {
+        query.name = { $regex: k, $options: 'i' };
+      }
+    }
+  }
 
   // Handle Category (Match exactly if present and not 'All')
   if (category && category !== 'All') {

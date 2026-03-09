@@ -9,6 +9,11 @@ import QuickViewModal from '../components/ui/QuickViewModal';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const CATEGORIES = ['All', 'Apparel', 'Footwear', 'Accessories'];
+const SUB_CATEGORIES = {
+  'Apparel': ['Shirt', 'T-shirt', 'Coat'],
+  'Footwear': ['Sport Shoe', 'Boot'],
+  'Accessories': ['Watch', 'Bag']
+};
 const COLORS = ['All', 'Black', 'White', 'Gold', 'Brown', 'Blue', 'Cream', 'Cognac', 'Navy', 'Silver', 'Charcoal', 'Camel'];
 const SORTS = [
   { val: '', label: 'Latest' },
@@ -37,11 +42,15 @@ export default function ShopPage() {
     const params = new URLSearchParams(location.search);
     const genderParam = params.get('gender') || '';
     const subCatParam = params.get('subCategory') || '';
+    const keywordParam = params.get('keyword') || '';
     const isNavbarNav = !!(genderParam || subCatParam);
 
-    // If it's a Navbar-triggered navigation, we should primarily trust the URL params.
-    // We'll ignore the local 'search' and 'category' if gender/subcat are present to avoid conflicts.
-    const effectiveSearch = isNavbarNav ? '' : search;
+    // If keyword is in URL, sync it to local state for UX consistency
+    if (keywordParam && keywordParam !== search) {
+      setSearch(keywordParam);
+    }
+
+    const effectiveSearch = keywordParam || (isNavbarNav ? '' : search);
     const effectiveCategory = (subCatParam || genderParam) ? '' : (category === 'All' ? '' : category);
 
     // Fetch products
@@ -141,20 +150,45 @@ export default function ShopPage() {
             {/* Category */}
             <div className="mb-7">
               <div className="text-[0.7rem] font-bold tracking-[2px] text-[#CFA052] uppercase mb-3">Category</div>
-              {CATEGORIES.map(c => (
-                <button key={c} onClick={() => {
-                  setCategory(c);
-                  // If switching broad categories, clear the specific subCategory from Nav
-                  if (subCatName) {
-                    const params = new URLSearchParams(location.search);
-                    params.delete('subCategory');
-                    navigate(`/shop?${params.toString()}`);
-                  }
-                }}
-                  className={`block w-full text-left bg-transparent border-none py-2 text-[0.88rem] cursor-pointer transition-all duration-200 mb-1 rounded-sm pl-2 ${category === c ? 'font-bold text-[#CFA052] border-l-2 border-l-[#CFA052]' : 'font-normal text-gray-500 border-l-2 border-l-transparent'}`}>
-                  {c}
-                </button>
-              ))}
+              {CATEGORIES.map(c => {
+                const isActive = category === c;
+                return (
+                  <div key={c} className="mb-1">
+                    <button onClick={() => {
+                      setCategory(c);
+                      // Clear subCategory and gender when switching broad categories manually
+                      if (subCatName || genderName) {
+                        navigate('/shop');
+                      }
+                    }}
+                      className={`block w-full text-left bg-transparent border-none py-2 text-[0.88rem] cursor-pointer transition-all duration-200 pl-2 ${isActive ? 'font-bold text-[#CFA052] border-l-2 border-l-[#CFA052]' : 'font-normal text-gray-500 border-l-2 border-l-transparent'}`}>
+                      {c}
+                    </button>
+                    {/* Sub-categories */}
+                    {isActive && SUB_CATEGORIES[c] && (
+                      <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-gold/10">
+                        {SUB_CATEGORIES[c].map(sub => {
+                          // Check if any gender-prefixed subcategory matches
+                          const isSubActive = subCatName === `Men ${sub}` || subCatName === `Women ${sub}` || subCatName === sub;
+                          return (
+                            <button
+                              key={sub}
+                              onClick={() => {
+                                // Default to Women if not specified, or match current gender
+                                const targetGender = genderName || 'Women';
+                                navigate(`/shop?gender=${targetGender}&subCategory=${targetGender} ${sub}`);
+                              }}
+                              className={`text-left py-1.5 pl-3 text-[0.82rem] transition-colors cursor-pointer ${isSubActive ? 'text-gold font-semibold' : 'text-gray-400 hover:text-gold'}`}
+                            >
+                              {sub}s
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Color */}

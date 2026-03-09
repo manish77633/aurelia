@@ -49,7 +49,7 @@ export default function Footer() {
           {/* Shop */}
           <div>
             <div className="text-[0.65rem] font-bold tracking-[3px] uppercase mb-5" style={{ color: col }}>Shop</div>
-            {[['Luxury Watches', '/shop?category=Luxury Watches'], ['Designer Bags', '/shop?category=Designer Bags'], ['Premium Shoes', '/shop?category=Premium Shoes'], ['Exclusive Apparel', '/shop?category=Exclusive Apparel'], ['New Arrivals', '/shop'], ['Featured', '/shop?featured=true']].map(([l, h]) => (
+            {[['Luxury Watches', '/shop?category=Accessories&subCategory=Women Watch'], ['Designer Bags', '/shop?category=Accessories&subCategory=Women Bag'], ['Premium Shoes', '/shop?category=Footwear'], ['Exclusive Apparel', '/shop?category=Apparel'], ['New Arrivals', '/shop'], ['Featured', '/shop?featured=true']].map(([l, h]) => (
               <Link key={l} to={h} className="block text-[0.85rem] mb-2.5 no-underline transition-colors hover:text-white/75" style={{ color: muted }}>{l}</Link>
             ))}
           </div>

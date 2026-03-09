@@ -32,6 +32,11 @@ export default function ProductDetailPage() {
   const [hoverStar, setHoverStar] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  useEffect(() => {
+    if (product) setSelectedImage(product.image);
+  }, [product]);
 
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -81,15 +86,36 @@ export default function ProductDetailPage() {
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 mb-16 md:mb-20">
 
-          {/* LEFT: IMAGE */}
-          <div className="rounded-2xl overflow-hidden bg-[#f5ede0] aspect-square relative">
-            <img
-              src={product.image?.startsWith('/uploads') ? `${process.env.REACT_APP_API_URL.replace('/api', '')}${product.image}` : product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-            {product.featured && (
-              <span className="absolute top-4 left-4 bg-gold text-white text-[0.68rem] font-bold px-3 py-1 rounded-full tracking-wide">FEATURED</span>
+          {/* LEFT: IMAGE & GALLERY */}
+          <div className="flex flex-col gap-4">
+            <div className="rounded-3xl overflow-hidden bg-[#f5ede0] aspect-square relative shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+              <img
+                src={selectedImage?.startsWith('/uploads') ? `${process.env.REACT_APP_API_URL.replace('/api', '')}${selectedImage}` : selectedImage}
+                alt={product.name}
+                className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
+              />
+              {product.featured && (
+                <span className="absolute top-5 left-5 bg-gold text-white text-[0.7rem] font-bold px-4 py-1.5 rounded-full tracking-widest shadow-lg">FEATURED</span>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            {product.images?.length > 1 && (
+              <div className="grid grid-cols-5 gap-3">
+                {product.images.map((img, idx) => {
+                  const isSelected = selectedImage === img;
+                  const fullUrl = img.startsWith('/uploads') ? `${process.env.REACT_APP_API_URL.replace('/api', '')}${img}` : img;
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => setSelectedImage(img)}
+                      className={`aspect-square rounded-xl overflow-hidden cursor-pointer transition-all duration-300 border-2 ${isSelected ? 'border-gold shadow-md scale-95' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                    >
+                      <img src={fullUrl} alt={`${product.name} ${idx}`} className="w-full h-full object-cover" />
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
 

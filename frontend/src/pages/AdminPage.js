@@ -22,14 +22,15 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import SearchIcon from '@mui/icons-material/Search';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const TABS = ['Dashboard', 'Products', 'Orders', 'Users'];
 const CATS = ['Apparel', 'Footwear', 'Accessories'];
 const GENDERS = ['Men', 'Women', 'Unisex'];
 const SUB_CATS = [
-  'Men Shirt', 'Men T-shirt', 'Men Coat', 'Men Sport Shoe', 'Men Boot', 'Men Watch',
-  'Women Shirt', 'Women T-shirt', 'Women Coat', 'Women Sport Shoe', 'Women Boot', 'Women Watch'
+  'Men Shirt', 'Men T-shirt', 'Men Coat', 'Men Sport Shoe', 'Men Boot', 'Men Watch', 'Men Bag',
+  'Women Shirt', 'Women T-shirt', 'Women Coat', 'Women Sport Shoe', 'Women Boot', 'Women Watch', 'Women Bag'
 ];
 
 const EMPTY_FORM = {
@@ -68,6 +69,9 @@ export default function AdminPage() {
   const [descLoading, setDescLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [mobileTabOpen, setMobileTabOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [adminSearch, setAdminSearch] = useState('');
+  const itemsPerPage = 12;
   const fileRef = useRef();
 
   useEffect(() => {
@@ -80,7 +84,7 @@ export default function AdminPage() {
   };
   const fetchProducts = async () => {
     try {
-      const { data } = await axios.get(`${API}/products`, { headers });
+      const { data } = await axios.get(`${API}/products?limit=1000`, { headers });
       setProducts(Array.isArray(data) ? data : (data.products || []));
     } catch { }
   };
@@ -97,6 +101,8 @@ export default function AdminPage() {
     if (products.length === 0) fetchProducts();
     if (orders.length === 0) fetchOrders();
     if (users.length === 0) fetchUsers();
+    setCurrentPage(1); // Reset page on tab change
+    setAdminSearch(''); // Reset search on tab change
   }, [tab]);
 
   // ── Multi-image helpers ──────────────────────────────────────
@@ -307,6 +313,18 @@ export default function AdminPage() {
             <div className="text-[0.78rem] text-[#9CA3AF]">Aurelia Luxe Management</div>
           </div>
         </div>
+
+        {/* GLOBAL ADMIN SEARCH */}
+        <div className="relative flex-grow max-w-[400px] hidden lg:block mx-8">
+          <SearchIcon sx={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF', fontSize: 18 }} />
+          <input
+            className="w-full py-2.5 pr-4 pl-10 border border-[#e8e0d6] rounded-xl font-inter text-[0.85rem] bg-[#FAFAFA] outline-none transition-all focus:border-[#CFA052] focus:bg-white focus:shadow-sm"
+            placeholder={`Search ${tab === 'Dashboard' ? 'everything' : tab.toLowerCase()}...`}
+            value={adminSearch}
+            onChange={e => setAdminSearch(e.target.value)}
+          />
+        </div>
+
         {/* TABS — scrollable on mobile */}
         <div className="flex gap-1 bg-[#f5f0e8] rounded-xl p-1 overflow-x-auto w-full sm:w-auto flex-shrink-0">
           {TABS.map(t => (
@@ -640,37 +658,88 @@ export default function AdminPage() {
 
             {/* PRODUCT LIST */}
             <div>
-              <div className="font-playfair text-xl font-bold mb-5">{products.length} Products</div>
+              <div className="font-playfair text-xl font-bold mb-5">
+                {adminSearch ? `Results for "${adminSearch}"` : `${products.length} Products`}
+              </div>
               <div className="flex flex-col gap-3">
-                {products.map(p => (
-                  <div
-                    key={p._id}
-                    className="bg-white rounded-2xl px-4 py-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex items-center gap-3.5 transition-all duration-200"
-                    style={{ border: editId === p._id ? '1.5px solid #CFA052' : '1.5px solid transparent' }}
-                  >
-                    <img
-                      src={p.image?.startsWith('/uploads') ? `${API.replace('/api', '')}${p.image}` : p.image}
-                      alt={p.name}
-                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover flex-shrink-0 bg-[#f5ede0]"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-[0.9rem] mb-0.5 truncate">{p.name}</div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-[0.75rem] text-[#9CA3AF]">{p.category}</span>
-                        {p.featured && <span className="text-[0.65rem] bg-[#fef9ec] text-[#CFA052] font-bold px-2 py-0.5 rounded-full">FEATURED</span>}
-                      </div>
-                    </div>
-                    <div className="font-playfair font-bold text-[#1A1A1A] flex-shrink-0 text-sm sm:text-base">${p.price?.toLocaleString()}</div>
-                    <div className="flex gap-1.5 flex-shrink-0">
-                      <button onClick={() => handleEdit(p)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border-[1.5px] border-[#e8e0d6] bg-white cursor-pointer flex items-center justify-center hover:border-[#CFA052] transition-colors">
-                        <EditOutlinedIcon sx={{ fontSize: 15, color: '#6B7280' }} />
-                      </button>
-                      <button onClick={() => handleDelete(p._id)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border-[1.5px] border-[#fee2e2] bg-white cursor-pointer flex items-center justify-center hover:bg-red-50 transition-colors">
-                        <DeleteOutlineIcon sx={{ fontSize: 15, color: '#f87171' }} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                {(() => {
+                  const filteredProducts = products.filter(p =>
+                    p.name.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                    p.category.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                    p.subCategory?.toLowerCase().includes(adminSearch.toLowerCase())
+                  );
+                  const sortedProducts = [...filteredProducts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                  const indexOfLastProduct = currentPage * itemsPerPage;
+                  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+                  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+                  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+                  return (
+                    <>
+                      {currentProducts.map(p => (
+                        <div
+                          key={p._id}
+                          className="bg-white rounded-2xl px-4 py-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex items-center gap-3.5 transition-all duration-200"
+                          style={{ border: editId === p._id ? '1.5px solid #CFA052' : '1.5px solid transparent' }}
+                        >
+                          <img
+                            src={p.image?.startsWith('/uploads') ? `${API.replace('/api', '')}${p.image}` : p.image}
+                            alt={p.name}
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover flex-shrink-0 bg-[#f5ede0]"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-bold text-[0.9rem] mb-0.5 truncate">{p.name}</div>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="text-[0.75rem] text-[#9CA3AF]">{p.category}</span>
+                              {p.featured && <span className="text-[0.65rem] bg-[#fef9ec] text-[#CFA052] font-bold px-2 py-0.5 rounded-full">FEATURED</span>}
+                            </div>
+                          </div>
+                          <div className="font-playfair font-bold text-[#1A1A1A] flex-shrink-0 text-sm sm:text-base">${p.price?.toLocaleString()}</div>
+                          <div className="flex gap-1.5 flex-shrink-0">
+                            <button onClick={() => handleEdit(p)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border-[1.5px] border-[#e8e0d6] bg-white cursor-pointer flex items-center justify-center hover:border-[#CFA052] transition-colors">
+                              <EditOutlinedIcon sx={{ fontSize: 15, color: '#6B7280' }} />
+                            </button>
+                            <button onClick={() => handleDelete(p._id)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border-[1.5px] border-[#fee2e2] bg-white cursor-pointer flex items-center justify-center hover:bg-red-50 transition-colors">
+                              <DeleteOutlineIcon sx={{ fontSize: 15, color: '#f87171' }} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Premium Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-2 mt-8 mb-4">
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                            className={`px-4 py-2 rounded-xl text-[0.8rem] font-bold transition-all duration-200 border-none cursor-pointer ${currentPage === 1 ? 'bg-gray-100 text-gray-400 opacity-50' : 'bg-white text-charcoal hover:bg-gold hover:text-white shadow-sm'}`}
+                          >
+                            Prev
+                          </button>
+                          {[...Array(totalPages)].map((_, i) => {
+                            const pageNum = i + 1;
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => setCurrentPage(pageNum)}
+                                className={`w-10 h-10 rounded-xl text-[0.85rem] font-bold transition-all duration-200 border-none cursor-pointer ${currentPage === pageNum ? 'bg-gold text-white shadow-[0_4px_12px_rgba(207,160,82,0.3)]' : 'bg-white text-gray-500 hover:bg-gray-50 shadow-sm'}`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })}
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                            disabled={currentPage === totalPages}
+                            className={`px-4 py-2 rounded-xl text-[0.8rem] font-bold transition-all duration-200 border-none cursor-pointer ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 opacity-50' : 'bg-white text-charcoal hover:bg-gold hover:text-white shadow-sm'}`}
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -679,37 +748,46 @@ export default function AdminPage() {
         {/* ── ORDERS ──────────────────────────────── */}
         {tab === 'Orders' && (
           <div>
-            <h2 className="font-playfair text-2xl font-bold mb-6">All Orders ({orders.length})</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-playfair text-2xl font-bold">All Orders ({orders.length})</h2>
+              {adminSearch && <span className="text-[0.85rem] text-gold font-semibold">Filtering by: {adminSearch}</span>}
+            </div>
 
             {/* Mobile card view */}
             <div className="flex flex-col gap-4 lg:hidden">
-              {orders.map(o => {
-                const sc = statusColors(o.status);
-                return (
-                  <div key={o._id} className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] border border-[#f0ebe3]">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <div className="text-[0.75rem] text-[#9CA3AF] font-medium">#{o._id?.slice(-6)}</div>
-                        <div className="font-semibold text-[#1A1A1A]">{o.user?.name || '—'}</div>
+              {orders
+                .filter(o =>
+                  o._id.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                  o.user?.name?.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                  o.status?.toLowerCase().includes(adminSearch.toLowerCase())
+                )
+                .map(o => {
+                  const sc = statusColors(o.status);
+                  return (
+                    <div key={o._id} className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] border border-[#f0ebe3]">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <div className="text-[0.75rem] text-[#9CA3AF] font-medium">#{o._id?.slice(-6)}</div>
+                          <div className="font-semibold text-[#1A1A1A]">{o.user?.name || '—'}</div>
+                        </div>
+                        <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold" style={{ background: sc.bg, color: sc.color }}>
+                          {o.status || 'Processing'}
+                        </span>
                       </div>
-                      <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold" style={{ background: sc.bg, color: sc.color }}>
-                        {o.status || 'Processing'}
-                      </span>
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="text-[0.85rem] text-[#6B7280]">{o.orderItems?.length} item(s) • {new Date(o.createdAt).toLocaleDateString()}</div>
+                        <div className="font-bold text-[#CFA052]">${o.totalPrice?.toFixed(2)}</div>
+                      </div>
+                      <select
+                        value={o.status || 'Processing'}
+                        onChange={e => updateOrderStatus(o._id, e.target.value)}
+                        className="w-full px-3 py-2 border-[1.5px] border-[#e8e0d6] rounded-xl text-[0.85rem] cursor-pointer font-inter bg-[#FAFAFA] outline-none focus:border-[#CFA052]"
+                      >
+                        {ORDER_STATUSES.map(s => <option key={s}>{s}</option>)}
+                      </select>
                     </div>
-                    <div className="flex justify-between items-center mb-3">
-                      <div className="text-[0.85rem] text-[#6B7280]">{o.orderItems?.length} item(s) • {new Date(o.createdAt).toLocaleDateString()}</div>
-                      <div className="font-bold text-[#CFA052]">${o.totalPrice?.toFixed(2)}</div>
-                    </div>
-                    <select
-                      value={o.status || 'Processing'}
-                      onChange={e => updateOrderStatus(o._id, e.target.value)}
-                      className="w-full px-3 py-2 border-[1.5px] border-[#e8e0d6] rounded-xl text-[0.85rem] cursor-pointer font-inter bg-[#FAFAFA] outline-none focus:border-[#CFA052]"
-                    >
-                      {ORDER_STATUSES.map(s => <option key={s}>{s}</option>)}
-                    </select>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
 
             {/* Desktop table */}
@@ -723,32 +801,38 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map(o => {
-                    const sc = statusColors(o.status);
-                    return (
-                      <tr key={o._id} className="border-b border-[#f5f0e8]">
-                        <td className="px-4 py-3.5 text-[0.8rem] text-[#9CA3AF]">#{o._id?.slice(-6)}</td>
-                        <td className="px-4 py-3.5 text-[0.88rem] font-semibold">{o.user?.name}</td>
-                        <td className="px-4 py-3.5 text-[0.88rem] text-[#6B7280]">{o.orderItems?.length}</td>
-                        <td className="px-4 py-3.5 font-bold text-[#CFA052]">${o.totalPrice?.toFixed(2)}</td>
-                        <td className="px-4 py-3.5">
-                          <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold" style={{ background: sc.bg, color: sc.color }}>
-                            {o.status || 'Processing'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3.5 text-[0.8rem] text-[#9CA3AF]">{new Date(o.createdAt).toLocaleDateString()}</td>
-                        <td className="px-4 py-3.5">
-                          <select
-                            value={o.status || 'Processing'}
-                            onChange={e => updateOrderStatus(o._id, e.target.value)}
-                            className="px-2.5 py-1.5 border-[1.5px] border-[#e8e0d6] rounded-lg text-[0.8rem] cursor-pointer font-inter bg-white outline-none"
-                          >
-                            {ORDER_STATUSES.map(s => <option key={s}>{s}</option>)}
-                          </select>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {orders
+                    .filter(o =>
+                      o._id.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                      o.user?.name?.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                      o.status?.toLowerCase().includes(adminSearch.toLowerCase())
+                    )
+                    .map(o => {
+                      const sc = statusColors(o.status);
+                      return (
+                        <tr key={o._id} className="border-b border-[#f5f0e8]">
+                          <td className="px-4 py-3.5 text-[0.8rem] text-[#9CA3AF]">#{o._id?.slice(-6)}</td>
+                          <td className="px-4 py-3.5 text-[0.88rem] font-semibold">{o.user?.name}</td>
+                          <td className="px-4 py-3.5 text-[0.88rem] text-[#6B7280]">{o.orderItems?.length}</td>
+                          <td className="px-4 py-3.5 font-bold text-[#CFA052]">${o.totalPrice?.toFixed(2)}</td>
+                          <td className="px-4 py-3.5">
+                            <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold" style={{ background: sc.bg, color: sc.color }}>
+                              {o.status || 'Processing'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5 text-[0.8rem] text-[#9CA3AF]">{new Date(o.createdAt).toLocaleDateString()}</td>
+                          <td className="px-4 py-3.5">
+                            <select
+                              value={o.status || 'Processing'}
+                              onChange={e => updateOrderStatus(o._id, e.target.value)}
+                              className="px-2.5 py-1.5 border-[1.5px] border-[#e8e0d6] rounded-lg text-[0.8rem] cursor-pointer font-inter bg-white outline-none"
+                            >
+                              {ORDER_STATUSES.map(s => <option key={s}>{s}</option>)}
+                            </select>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
@@ -758,48 +842,56 @@ export default function AdminPage() {
         {/* ── USERS ───────────────────────────────── */}
         {tab === 'Users' && (
           <div>
-            <h2 className="font-playfair text-2xl font-bold mb-6">All Users ({users.length})</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-playfair text-2xl font-bold">All Users ({users.length})</h2>
+              {adminSearch && <span className="text-[0.85rem] text-gold font-semibold">Filtering by: {adminSearch}</span>}
+            </div>
 
             {/* Mobile card view */}
             <div className="flex flex-col gap-4 lg:hidden">
-              {users.map(u => (
-                <div
-                  key={u._id}
-                  className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] border border-[#f0ebe3] cursor-pointer hover:border-[rgba(207,160,82,0.3)] transition-colors"
-                  onClick={() => setSelectedUser(u)}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-[#f5ede0] flex items-center justify-center font-playfair font-bold text-[#CFA052]">
-                      {u.name?.[0]?.toUpperCase()}
+              {users
+                .filter(u =>
+                  u.name.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                  u.email.toLowerCase().includes(adminSearch.toLowerCase())
+                )
+                .map(u => (
+                  <div
+                    key={u._id}
+                    className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] border border-[#f0ebe3] cursor-pointer hover:border-[rgba(207,160,82,0.3)] transition-colors"
+                    onClick={() => setSelectedUser(u)}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-[#f5ede0] flex items-center justify-center font-playfair font-bold text-[#CFA052]">
+                        {u.name?.[0]?.toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-[#1A1A1A] truncate">{u.name}</div>
+                        <div className="text-[0.82rem] text-[#6B7280] truncate">{u.email}</div>
+                      </div>
+                      <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold flex-shrink-0"
+                        style={{ background: u.role === 'admin' ? '#fef9ec' : '#f5f5f5', color: u.role === 'admin' ? '#CFA052' : '#6B7280' }}>
+                        {u.role}
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-[#1A1A1A] truncate">{u.name}</div>
-                      <div className="text-[0.82rem] text-[#6B7280] truncate">{u.email}</div>
-                    </div>
-                    <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold flex-shrink-0"
-                      style={{ background: u.role === 'admin' ? '#fef9ec' : '#f5f5f5', color: u.role === 'admin' ? '#CFA052' : '#6B7280' }}>
-                      {u.role}
-                    </span>
-                  </div>
-                  <div className="flex gap-2 items-center" onClick={e => e.stopPropagation()}>
-                    <select
-                      value={u.role}
-                      onChange={e => updateUserRole(u._id, e.target.value)}
-                      className="flex-1 px-3 py-2 border-[1.5px] border-[#e8e0d6] rounded-xl text-[0.82rem] cursor-pointer font-inter bg-[#FAFAFA] outline-none"
-                    >
-                      {['user', 'admin'].map(r => <option key={r}>{r}</option>)}
-                    </select>
-                    {u._id !== user._id && (
-                      <button
-                        onClick={() => deleteUser(u._id)}
-                        className="w-9 h-9 rounded-xl border-[1.5px] border-[#fee2e2] bg-white cursor-pointer flex items-center justify-center hover:bg-red-50"
+                    <div className="flex gap-2 items-center" onClick={e => e.stopPropagation()}>
+                      <select
+                        value={u.role}
+                        onChange={e => updateUserRole(u._id, e.target.value)}
+                        className="flex-1 px-3 py-2 border-[1.5px] border-[#e8e0d6] rounded-xl text-[0.82rem] cursor-pointer font-inter bg-[#FAFAFA] outline-none"
                       >
-                        <DeleteOutlineIcon sx={{ fontSize: 16, color: '#f87171' }} />
-                      </button>
-                    )}
+                        {['user', 'admin'].map(r => <option key={r}>{r}</option>)}
+                      </select>
+                      {u._id !== user._id && (
+                        <button
+                          onClick={() => deleteUser(u._id)}
+                          className="w-9 h-9 rounded-xl border-[1.5px] border-[#fee2e2] bg-white cursor-pointer flex items-center justify-center hover:bg-red-50"
+                        >
+                          <DeleteOutlineIcon sx={{ fontSize: 16, color: '#f87171' }} />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
 
             {/* Desktop table */}
@@ -813,49 +905,54 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map(u => (
-                    <tr
-                      key={u._id}
-                      className="border-b border-[#f5f0e8] cursor-pointer hover:bg-[#FAFAFA] transition-colors"
-                      onClick={() => setSelectedUser(u)}
-                    >
-                      <td className="px-4 py-3.5 font-semibold">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-[#f5ede0] flex items-center justify-center font-playfair font-bold text-[#CFA052] text-sm flex-shrink-0">
-                            {u.name?.[0]?.toUpperCase()}
+                  {users
+                    .filter(u =>
+                      u.name.toLowerCase().includes(adminSearch.toLowerCase()) ||
+                      u.email.toLowerCase().includes(adminSearch.toLowerCase())
+                    )
+                    .map(u => (
+                      <tr
+                        key={u._id}
+                        className="border-b border-[#f5f0e8] cursor-pointer hover:bg-[#FAFAFA] transition-colors"
+                        onClick={() => setSelectedUser(u)}
+                      >
+                        <td className="px-4 py-3.5 font-semibold">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-[#f5ede0] flex items-center justify-center font-playfair font-bold text-[#CFA052] text-sm flex-shrink-0">
+                              {u.name?.[0]?.toUpperCase()}
+                            </div>
+                            {u.name}
                           </div>
-                          {u.name}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3.5 text-[0.85rem] text-[#6B7280]">{u.email}</td>
-                      <td className="px-4 py-3.5">
-                        <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold"
-                          style={{ background: u.role === 'admin' ? '#fef9ec' : '#f5f5f5', color: u.role === 'admin' ? '#CFA052' : '#6B7280' }}>
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3.5 text-[0.8rem] text-[#9CA3AF]">{new Date(u.createdAt).toLocaleDateString()}</td>
-                      <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
-                        <div className="flex gap-2 items-center">
-                          <select
-                            value={u.role}
-                            onChange={e => updateUserRole(u._id, e.target.value)}
-                            className="px-2.5 py-1.5 border-[1.5px] border-[#e8e0d6] rounded-lg text-[0.8rem] cursor-pointer font-inter bg-white outline-none"
-                          >
-                            {['user', 'admin'].map(r => <option key={r}>{r}</option>)}
-                          </select>
-                          {u._id !== user._id && (
-                            <button
-                              onClick={() => deleteUser(u._id)}
-                              className="w-8 h-8 rounded-lg border-[1.5px] border-[#fee2e2] bg-white cursor-pointer flex items-center justify-center hover:bg-red-50"
+                        </td>
+                        <td className="px-4 py-3.5 text-[0.85rem] text-[#6B7280]">{u.email}</td>
+                        <td className="px-4 py-3.5">
+                          <span className="px-3 py-1 rounded-full text-[0.72rem] font-bold"
+                            style={{ background: u.role === 'admin' ? '#fef9ec' : '#f5f5f5', color: u.role === 'admin' ? '#CFA052' : '#6B7280' }}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5 text-[0.8rem] text-[#9CA3AF]">{new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
+                          <div className="flex gap-2 items-center">
+                            <select
+                              value={u.role}
+                              onChange={e => updateUserRole(u._id, e.target.value)}
+                              className="px-2.5 py-1.5 border-[1.5px] border-[#e8e0d6] rounded-lg text-[0.8rem] cursor-pointer font-inter bg-white outline-none"
                             >
-                              <DeleteOutlineIcon sx={{ fontSize: 16, color: '#f87171' }} />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                              {['user', 'admin'].map(r => <option key={r}>{r}</option>)}
+                            </select>
+                            {u._id !== user._id && (
+                              <button
+                                onClick={() => deleteUser(u._id)}
+                                className="w-8 h-8 rounded-lg border-[1.5px] border-[#fee2e2] bg-white cursor-pointer flex items-center justify-center hover:bg-red-50"
+                              >
+                                <DeleteOutlineIcon sx={{ fontSize: 16, color: '#f87171' }} />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
