@@ -1,6 +1,5 @@
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,15 +7,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename(req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`);
-  },
-});
-
+// Use memory storage so we can upload directly to Cloudinary (avoids ephemeral disk issues on Render)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-module.exports = { upload };
+module.exports = { upload, cloudinary };

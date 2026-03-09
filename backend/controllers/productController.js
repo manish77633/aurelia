@@ -1,7 +1,23 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
-// Cloudinary removed
+const { cloudinary } = require('../middleware/uploadMiddleware');
+const streamifier = require('streamifier');
 
+const streamUpload = (buffer) => {
+  return new Promise((resolve, reject) => {
+    let stream = cloudinary.uploader.upload_stream(
+      { folder: 'aurelia-luxe-products' },
+      (error, result) => {
+        if (result) {
+          resolve(result.secure_url);
+        } else {
+          reject(error);
+        }
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+};
 // GET /api/products
 const getProducts = asyncHandler(async (req, res) => {
   const { keyword, category, color, minPrice, maxPrice, sort, featured } = req.query;
@@ -50,9 +66,12 @@ const createProduct = asyncHandler(async (req, res) => {
   // Build images array from uploaded files + any URL-based images
   let allImages = [];
 
-  // Uploaded files
+  // Uploaded files via Cloudinary streamifier
   if (req.files && req.files.length > 0) {
-    req.files.forEach(f => allImages.push(`/uploads/${f.filename}`));
+    for (const file of req.files) {
+      const url = await streamUpload(file.buffer);
+      allImages.push(url);
+    }
   }
 
   // URL-based images (sent as JSON array string or comma-separated)
@@ -107,9 +126,12 @@ const updateProduct = asyncHandler(async (req, res) => {
     } catch { }
   }
 
-  // Add newly uploaded files
+  // Add newly uploaded files via Cloudinary
   if (req.files && req.files.length > 0) {
-    req.files.forEach(f => allImages.push(`/uploads/${f.filename}`));
+    for (const file of req.files) {
+      const url = await streamUpload(file.buffer);
+      allImages.push(url);
+    }
   }
 
   // Add URL-based images
