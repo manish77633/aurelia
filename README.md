@@ -1,5 +1,8 @@
 # 💎 Aurelia Luxe — Full-Stack E-Commerce
 
+
+<img width="1917" height="926" alt="Screenshot 2026-03-10 072116" src="https://github.com/user-attachments/assets/085a7ec0-5e5b-4446-bcf9-ba6ca24ae530" />
+
 > Ultra-premium luxury marketplace built with React, Node.js, MongoDB & Redux Toolkit.
 
 ## 🚀 Quick Start
