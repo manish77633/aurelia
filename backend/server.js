@@ -11,6 +11,11 @@ const passport = require('passport');
 const connectDB = require('./config/db');
 require('./config/passport');
 
+// JWT_SECRET validation
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.warn('\n⚠️  WARNING: JWT_SECRET is too weak! Use at least 32 characters in production.\n');
+}
+
 connectDB();
 const app = express();
 

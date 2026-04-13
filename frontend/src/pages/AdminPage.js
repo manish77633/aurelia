@@ -47,6 +47,7 @@ const EMPTY_FORM = {
 
 export default function AdminPage() {
   const { user } = useSelector(s => s.auth);
+  const darkMode = useSelector(s => s.theme.mode === 'dark');
   const navigate = useNavigate();
   const API = process.env.REACT_APP_API_URL;
   const headers = { Authorization: `Bearer ${user?.token}` };
@@ -287,8 +288,16 @@ export default function AdminPage() {
     await axios.delete(`${API}/admin/users/${id}`, { headers }); fetchUsers();
   };
 
-  const inp = "w-full px-3.5 py-2.5 border-[1.5px] border-[#e8e0d6] rounded-[10px] font-inter text-[0.9rem] bg-[#FAFAFA] outline-none text-[#1A1A1A] focus:border-[#CFA052] transition-colors";
+  const inp = "w-full px-3.5 py-2.5 border-[1.5px] border-[#e8e0d6] rounded-[10px] font-inter text-[0.9rem] bg-[#FAFAFA] outline-none text-[#1A1A1A] focus:border-gold transition-colors";
   const lbl = "text-[0.72rem] font-bold text-[#6B7280] block mb-1.5 tracking-[1px] uppercase";
+  // ── Dark mode inline overrides ────────────────────────────
+  const dmBorder = "border-[#e8e0d6]";
+  const dmBg = "bg-[#FAFAFA]";
+  const dmText = "text-[#1A1A1A]";
+  const dmTextMuted = "text-[#6B7280]";
+  const dmTextSubtle = "text-[#9CA3AF]";
+  // stat card value class: show value in dark, fallback to text-[#1A1A1A]
+  const statVal = darkMode ? "text-charcoal" : "text-[#1A1A1A]";
 
   const statusColors = (status) => {
     if (status === 'Delivered') return { bg: '#dcfce7', color: '#166534' };
@@ -302,15 +311,15 @@ export default function AdminPage() {
   const ORDER_STATUSES = ['Processing', 'Confirmed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen">
+    <div className="admin-bg min-h-screen">
 
       {/* HEADER */}
-      <div className="bg-white border-b border-[rgba(207,160,82,0.12)] px-4 sm:px-8 md:px-12 py-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+      <div className={`border-b px-4 sm:px-8 md:px-12 py-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center ${darkMode ? 'bg-[#181713] border-[rgba(255,255,255,0.07)]' : 'bg-white border-[rgba(207,160,82,0.12)]'}`}>
         <div className="flex items-center gap-2.5">
           <DiamondOutlinedIcon sx={{ color: '#CFA052', fontSize: 22 }} />
           <div>
-            <div className="font-playfair text-xl font-bold text-[#1A1A1A]">Admin Console</div>
-            <div className="text-[0.78rem] text-[#9CA3AF]">Aurelia Luxe Management</div>
+            <div className={`font-playfair text-xl font-bold ${darkMode ? 'text-white' : 'text-[#1A1A1A]'}`}>Admin Console</div>
+            <div className={`text-[0.78rem] ${darkMode ? 'text-white/50' : 'text-[#9CA3AF]'}`}>Aurelia Luxe Management</div>
           </div>
         </div>
 
@@ -326,7 +335,7 @@ export default function AdminPage() {
         </div>
 
         {/* TABS — scrollable on mobile */}
-        <div className="flex gap-1 bg-[#f5f0e8] rounded-xl p-1 overflow-x-auto w-full sm:w-auto flex-shrink-0">
+        <div className={`flex gap-1 rounded-xl p-1 overflow-x-auto w-full sm:w-auto flex-shrink-0 ${darkMode ? 'bg-[#181713]' : 'bg-[#f5f0e8]'}`}>
           {TABS.map(t => (
             <button
               key={t}
@@ -366,7 +375,7 @@ export default function AdminPage() {
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: `${color}15` }}>
                     <Icon sx={{ fontSize: 20, color }} />
                   </div>
-                  <div className="font-playfair text-2xl sm:text-3xl font-bold text-[#1A1A1A] break-all">{value}</div>
+                  <div className={`font-playfair text-2xl sm:text-3xl font-bold ${statVal} break-all`}>{value}</div>
                   <div className="text-[0.78rem] text-[#9CA3AF] mt-1">{label}</div>
                   {subtitle && <div className="text-[0.65rem] text-[#CFA052] font-semibold mt-0.5">{subtitle}</div>}
                 </div>

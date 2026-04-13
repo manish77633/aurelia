@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { addToCart } from '../../slices/cartSlice';
 import { toggleWishlist } from '../../slices/wishlistSlice';
@@ -40,9 +41,11 @@ export default function ProductCard({ product, onQuickView }) {
     : product.image;
 
   return (
-    <div
+    <motion.div
       onClick={() => navigate(`/product/${product._id}`)}
-      className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-50 overflow-hidden cursor-pointer relative transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
+      whileHover={{ y: -8 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-50 overflow-hidden cursor-pointer relative transition-all duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
 
       {/* Image */}
       <div className="relative h-48 md:h-60 overflow-hidden bg-[#f5f0e8] group">
@@ -100,6 +103,6 @@ export default function ProductCard({ product, onQuickView }) {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

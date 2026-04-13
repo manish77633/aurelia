@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
 import { fetchProducts } from '../slices/productSlice';
 import ProductCard from '../components/ui/ProductCard';
 import QuickViewModal from '../components/ui/QuickViewModal';
@@ -77,7 +78,7 @@ export default function HomePage() {
     <div className="bg-cream min-h-screen" ref={pageRef}>
 
       {/* ── HERO ─────────────────────────────────────── */}
-      <section className="relative min-h-[calc(100vh-70px)] flex items-center overflow-hidden bg-[#fdfbf7] pt-16 md:pt-0">
+      <section className="hero-section relative min-h-[calc(100vh-70px)] flex items-center overflow-hidden pt-16 md:pt-0">
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <div className="absolute inset-0 bg-[url('https://luxe-showcase-hub.lovable.app/assets/hero-bg-7iGSsb9J.jpg')] bg-cover bg-center opacity-100" />
@@ -94,18 +95,38 @@ export default function HomePage() {
         <div className="hidden lg:block absolute right-[7%] top-[12%] w-[420px] h-[420px] border border-gold/20 rounded-full pointer-events-none z-0 mix-blend-overlay" />
 
         <div className="relative z-10 px-6 md:px-20 max-w-[800px] mx-auto lg:ml-[10%] text-left">
-          <div className="fade-in-up flex items-center gap-2 mb-5">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-2 mb-5"
+          >
             <div className="w-8 h-[1px] bg-gold" />
             <span className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase">Premium Marketplace</span>
-          </div>
-          <h1 className="fade-in-up delay-1 font-playfair text-4xl md:text-6xl lg:text-[4rem] leading-[1.1] font-bold text-charcoal mb-5">
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-playfair text-4xl md:text-6xl lg:text-[4rem] leading-[1.1] font-bold text-charcoal mb-5"
+          >
             Where Luxury<br />
             <span className="text-gold italic">Finds</span> a Home.
-          </h1>
-          <p className="fade-in-up delay-2 text-sm md:text-base text-[#5a5147] leading-relaxed mb-10 max-w-[480px]">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-sm md:text-base text-[#5a5147] leading-relaxed mb-10 max-w-[480px]"
+          >
             Discover an unparalleled edit of the world's finest watches, bags, shoes and apparel — curated for those who demand nothing short of extraordinary.
-          </p>
-          <div className="fade-in-up delay-3 flex flex-col sm:flex-row gap-4">
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
             <button className="btn-gold flex items-center justify-center gap-2 text-sm md:text-[0.92rem] px-8 py-4" onClick={() => navigate('/shop')}>
               Explore Collection <ArrowForwardIcon sx={{ fontSize: 18 }} />
             </button>
@@ -113,7 +134,7 @@ export default function HomePage() {
               className="bg-white border-[1.5px] border-gold text-charcoal font-inter text-sm md:text-[0.92rem] font-semibold px-7 py-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-charcoal hover:text-white hover:-translate-y-1 hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] flex items-center justify-center">
               Our Story
             </button>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -137,13 +158,21 @@ export default function HomePage() {
             { Icon: DiamondOutlinedIcon, title: 'Premium Quality', desc: 'Only the finest materials and craft' },
             { Icon: SupportAgentIcon, title: '24/7 Concierge', desc: 'White-glove support at every step' },
           ].map(({ Icon, title, desc }, i) => (
-            <div key={i} className={`scroll-animate delay-${i + 1} text-center px-4 py-6 md:p-7 rounded-2xl border border-gold/10 bg-cream transition-all duration-300 hover:bg-white hover:shadow-[0_8px_32px_rgba(207,160,82,0.12)] hover:border-gold/30`}>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="text-center px-4 py-6 md:p-7 rounded-2xl border border-gold/10 bg-cream transition-all duration-300 hover:bg-white hover:shadow-[0_8px_32px_rgba(207,160,82,0.12)] hover:border-gold/30"
+            >
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#CFA052] to-[#E8C97A] flex items-center justify-center mx-auto mb-4">
                 <Icon sx={{ fontSize: 24, color: '#fff' }} />
               </div>
               <div className="font-playfair text-base md:text-[1rem] font-semibold mb-2 text-charcoal">{title}</div>
               <div className="text-[0.8rem] md:text-[0.82rem] text-gray-500 leading-relaxed">{desc}</div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -152,14 +181,54 @@ export default function HomePage() {
       <section className="py-12 md:py-16 px-6 md:px-12 bg-cream">
         <div className="max-w-[1280px] mx-auto">
           <div className="text-center mb-10 md:mb-12">
-            <span className="scroll-animate text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-2">Featured</span>
-            <h2 className="scroll-animate delay-1 font-playfair text-3xl md:text-5xl font-bold text-charcoal mb-4">Curated for You</h2>
-            <p className="scroll-animate delay-2 text-sm md:text-[0.92rem] text-gray-500 max-w-[440px] mx-auto">An exquisite selection of our finest pieces, handpicked by our in-house curators.</p>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-2"
+            >
+              Featured
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-playfair text-3xl md:text-5xl font-bold text-charcoal mb-4"
+            >
+              Curated for You
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-sm md:text-[0.92rem] text-gray-500 max-w-[440px] mx-auto"
+            >
+              An exquisite selection of our finest pieces, handpicked by our in-house curators.
+            </motion.p>
           </div>
           {loading ? <Loader /> : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featured.map(p => <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />)}
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {featured.map((p, i) => (
+                <motion.div
+                  key={p._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                >
+                  <ProductCard product={p} onQuickView={setQuickViewProduct} />
+                </motion.div>
+              ))}
+            </motion.div>
           )}
           <div className="text-center mt-12 md:mt-16">
             <button className="btn-gold inline-flex items-center gap-2" onClick={() => navigate('/shop')}>
@@ -209,11 +278,34 @@ export default function HomePage() {
       <section className="py-16 md:py-20 px-6 md:px-12 bg-white">
         <div className="max-w-[780px] mx-auto">
           <div className="text-center mb-10 md:mb-12">
-            <span className="scroll-animate text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-3">Support</span>
-            <h2 className="scroll-animate delay-1 font-playfair text-3xl md:text-4xl font-bold text-charcoal">Frequently Asked Questions</h2>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-[0.65rem] md:text-[0.72rem] font-bold tracking-[4px] text-gold uppercase block mb-3"
+            >
+              Support
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-playfair text-3xl md:text-4xl font-bold text-charcoal"
+            >
+              Frequently Asked Questions
+            </motion.h2>
           </div>
           {FAQ.map((item, i) => (
-            <div key={i} className={`scroll-animate delay-${i % 4 + 1} border-b border-[#f0ebe3] overflow-hidden`}>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+              className="border-b border-[#f0ebe3] overflow-hidden"
+            >
               <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full bg-transparent border-none flex items-center justify-between py-5 cursor-pointer text-left focus:outline-none">
                 <span className="font-playfair text-[0.95rem] md:text-base font-semibold text-charcoal pr-5">{item.q}</span>
@@ -221,10 +313,14 @@ export default function HomePage() {
                   {openFaq === i ? <RemoveIcon sx={{ fontSize: 14, color: '#fff' }} /> : <AddIcon sx={{ fontSize: 14, color: '#CFA052' }} />}
                 </span>
               </button>
-              <div className={`overflow-hidden transition-all duration-400 ease-in-out ${openFaq === i ? 'max-h-[200px]' : 'max-h-0'}`}>
+              <motion.div
+                initial={false}
+                animate={{ height: openFaq === i ? 'auto' : 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 <p className="text-[0.85rem] md:text-[0.9rem] text-gray-500 leading-relaxed pb-5 pt-1">{item.a}</p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))}
         </div>
       </section>

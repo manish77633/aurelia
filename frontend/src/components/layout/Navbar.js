@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../slices/authSlice';
 import { resetCart } from '../../slices/cartSlice';
 import { resetWishlist } from '../../slices/wishlistSlice';
+import { toggleTheme } from '../../slices/themeSlice';
 import { toast } from 'react-toastify';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -24,6 +25,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((s) => s.auth);
+  const { mode: darkMode } = useSelector((s) => s.theme);
   const { items: cartItems } = useSelector((s) => s.cart);
   const { items: wishItems } = useSelector((s) => s.wishlist);
   const [scrolled, setScrolled] = useState(false);
@@ -41,6 +43,12 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Dark mode body class sync
+  useEffect(() => {
+    if (darkMode === 'dark') document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+  }, [darkMode]);
 
   // Close mobile menu and search on route change
   useEffect(() => {
@@ -184,6 +192,19 @@ export default function Navbar() {
 
         {/* DESKTOP RIGHT ACTIONS */}
         <div className="hidden md:flex items-center gap-2">
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={() => dispatch(toggleTheme())}
+            className="p-2 rounded-lg hover:bg-gold/10 transition-colors"
+            title={darkMode === 'dark' ? 'Light mode' : 'Dark mode'}
+          >
+            {darkMode === 'dark' ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#CFA052" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            )}
+          </button>
+
           {/* Search Box */}
           <div className="relative flex items-center h-full mr-2">
             <form
@@ -283,6 +304,13 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            {/* Dark mode toggle in mobile menu */}
+            <button
+              onClick={() => dispatch(toggleTheme())}
+              className="flex items-center gap-3 font-playfair text-2xl font-semibold py-3 border-b border-gray-100 text-charcoal hover:text-gold transition-colors w-full text-left"
+            >
+              <span>{darkMode === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}</span>
+            </button>
           </div>
 
           {/* User Actions */}

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
+import { AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -22,6 +23,7 @@ import OrdersPage from './pages/OrdersPage';
 import AboutPage from './pages/AboutPage';
 import CheckoutPage from './pages/CheckoutPage';
 import Chatbot from './components/Chatbot';
+import PageTransition from './components/ui/PageTransition';
 
 import { fetchCart } from './slices/cartSlice';
 import { fetchWishlist } from './slices/wishlistSlice';
@@ -44,6 +46,14 @@ function ScrollToTop() {
 export default function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
+  const { mode: darkMode } = useSelector((s) => s.theme);
+
+  // Sync dark mode class on body on first render
+  useEffect(() => {
+    if (darkMode === 'dark') document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+  }, [darkMode]);
+
   useEffect(() => {
     if (user) { dispatch(fetchCart()); dispatch(fetchWishlist()); }
   }, [user, dispatch]);
@@ -53,29 +63,31 @@ export default function App() {
       <Navbar />
       <ScrollToTop />
       <main style={{ minHeight: '80vh' }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/shop" element={<ShopPage />} />
-          <Route path="/product/:id" element={<ProductDetailPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-          <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-          <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
-          <Route path="/admin-login" element={<AdminLoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-          <Route path="/oauth-success" element={<OAuthSuccess />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+            <Route path="/shop" element={<PageTransition><ShopPage /></PageTransition>} />
+            <Route path="/product/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
+            <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
+            <Route path="/cart" element={<ProtectedRoute><PageTransition><CartPage /></PageTransition></ProtectedRoute>} />
+            <Route path="/checkout" element={<ProtectedRoute><PageTransition><CheckoutPage /></PageTransition></ProtectedRoute>} />
+            <Route path="/wishlist" element={<ProtectedRoute><PageTransition><WishlistPage /></PageTransition></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute><PageTransition><OrdersPage /></PageTransition></ProtectedRoute>} />
+            <Route path="/admin" element={<AdminRoute><PageTransition><AdminPage /></PageTransition></AdminRoute>} />
+            <Route path="/admin-login" element={<PageTransition><AdminLoginPage /></PageTransition>} />
+            <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
+            <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
+            <Route path="/forgot-password" element={<PageTransition><ForgotPasswordPage /></PageTransition>} />
+            <Route path="/reset-password/:token" element={<PageTransition><ResetPasswordPage /></PageTransition>} />
+            <Route path="/oauth-success" element={<PageTransition><OAuthSuccess /></PageTransition>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AnimatePresence>
       </main>
       <Chatbot />
       <Footer />
-      <ToastContainer position="bottom-right" autoClose={2500} theme="light" />
+      <ToastContainer position="bottom-right" autoClose={2500} theme={darkMode === 'dark' ? 'dark' : 'light'} />
     </>
   );
 }

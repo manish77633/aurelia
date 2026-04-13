@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
 import { fetchProducts } from '../slices/productSlice';
 import ProductCard from '../components/ui/ProductCard';
 import Loader from '../components/ui/Loader';
@@ -111,12 +112,24 @@ export default function ShopPage() {
       {/* PAGE HEADER */}
       <div className="bg-white border-b border-[#CFA052]/10 py-8 px-6 md:px-12 lg:pt-10">
         <div className="max-w-[1280px] mx-auto">
-          <span className="text-[0.65rem] md:text-[0.7rem] font-bold tracking-[4px] text-[#CFA052] uppercase block">Aurelia Luxe</span>
-          <h1 className="font-playfair text-[2rem] md:text-[2.4rem] font-bold text-[#1A1A1A] mt-2 mb-5">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="text-[0.65rem] md:text-[0.7rem] font-bold tracking-[4px] text-[#CFA052] uppercase block"
+          >
+            Aurelia Luxe
+          </motion.span>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="font-playfair text-[2rem] md:text-[2.4rem] font-bold text-[#1A1A1A] mt-2 mb-5"
+          >
             {subCatName
               ? (subCatName.toLowerCase().includes('watch') ? `${subCatName}es` : `${subCatName}s`)
               : genderName ? `${genderName}'s Collection` : 'The Collection'}
-          </h1>
+          </motion.h1>
 
           {/* SEARCH BEHAVIOR */}
           <div className="relative max-w-[600px] flex gap-3">
@@ -234,31 +247,50 @@ export default function ShopPage() {
             </select>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map(p => (
-              <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {products.map((p, i) => (
+              <motion.div
+                key={p._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.05 }}
+              >
+                <ProductCard product={p} onQuickView={setQuickViewProduct} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {loading && <div className="mt-10"><Loader /></div>}
 
           {!loading && pages > currentPage && (
             <div className="text-center mt-12 mb-20">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={loadMore}
                 className="btn-gold px-12 py-4"
               >
                 Load More Products
-              </button>
+              </motion.button>
             </div>
           )}
 
           {!loading && products.length === 0 && (
-            <div className="text-center py-20 px-5 bg-white rounded-2xl border border-[#FAFAFA]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              className="text-center py-20 px-5 bg-white rounded-2xl border border-[#FAFAFA]"
+            >
               <div className="text-5xl opacity-20 mb-4">🔍</div>
               <div className="font-playfair text-xl md:text-2xl font-bold mb-2 text-[#1A1A1A]">No items found</div>
               <div className="text-[0.9rem] text-gray-500">Try adjusting your filters or search.</div>
-            </div>
+            </motion.div>
           )}
 
           {!loading && products.length > 0 && currentPage === pages && (

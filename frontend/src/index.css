@@ -390,3 +390,259 @@ img {
     transform: rotate(360deg);
   }
 }
+
+/* ── Dark / Premium Theme ──────────────────────────── */
+:root {
+  --dm-bg: #0F0E0C;
+  --dm-surface: #181713;
+  --dm-surface-2: #1F1E1A;
+  --dm-border: rgba(255,255,255,0.07);
+  --dm-text: #F5F0E8;
+  --dm-text-muted: rgba(245,240,232,0.5);
+  --dm-text-subtle: rgba(245,240,232,0.35);
+}
+
+body.dark {
+  --cream: #141310;
+  --cream-dark: #1A1916;
+  --white: #1E1C18;
+  --charcoal: #F5F0E8;
+  --gray-mid: rgba(245,240,232,0.6);
+  --gray-light: rgba(245,240,232,0.45);
+  --gray-bg: #181713;
+  --gold: #D4A853;
+  --gold-light: #E8C97A;
+  --gold-dark: #B8883A;
+  background: var(--dm-bg);
+  color: var(--dm-text);
+}
+
+/* Dark mode surfaces */
+body.dark .bg-cream { background: var(--dm-bg) !important; }
+body.dark .bg-\[\#FAFAFA\] { background: var(--dm-surface) !important; }
+body.dark .bg-white { background: var(--dm-surface) !important; }
+body.dark .bg-\[\#fdfbf7\] { background: var(--dm-surface) !important; }
+body.dark .bg-\[\#f5f0e8\] { background: var(--dm-surface-2) !important; }
+body.dark .bg-\[\#f0ebe3\] { background: var(--dm-surface-2) !important; }
+body.dark .border-gold\/10 { border-color: var(--dm-border) !important; }
+body.dark .border-gold\/20 { border-color: var(--dm-border) !important; }
+body.dark .border-\[\#e8e0d6\] { border-color: var(--dm-border) !important; }
+body.dark .border-gray-100 { border-color: var(--dm-border) !important; }
+
+/* Dark mode text */
+body.dark .text-charcoal { color: var(--dm-text) !important; }
+body.dark .text-gray-500 { color: var(--dm-text-muted) !important; }
+body.dark .text-gray-400 { color: var(--dm-text-subtle) !important; }
+body.dark .text-\[\#5a5147\] { color: var(--dm-text-muted) !important; }
+body.dark .text-gray-600 { color: var(--dm-text-muted) !important; }
+
+/* Dark mode navbar */
+body.dark nav { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+body.dark nav .text-charcoal { color: var(--dm-text) !important; }
+body.dark nav .text-gray-500 { color: var(--dm-text-muted) !important; }
+
+/* Dark mode cards */
+body.dark .light-testimonial-card {
+  background: var(--dm-surface);
+  border-color: var(--dm-border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+body.dark .light-testimonial-card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,168,83,0.1);
+}
+body.dark .light-testimonial-card::before {
+  background: linear-gradient(90deg, transparent 0%, rgba(212,168,83,0.3) 50%, transparent 100%);
+}
+
+/* Dark mode scrollbar */
+body.dark ::-webkit-scrollbar-track { background: var(--dm-bg); }
+body.dark ::-webkit-scrollbar-thumb { background: rgba(212,168,83,0.4); }
+
+/* Dark mode inputs */
+body.dark input, body.dark textarea {
+  background: var(--dm-surface-2);
+  border-color: var(--dm-border);
+  color: var(--dm-text);
+}
+body.dark input::placeholder, body.dark textarea::placeholder {
+  color: var(--dm-text-subtle);
+}
+body.dark input:focus, body.dark textarea:focus {
+  border-color: rgba(212,168,83,0.5);
+  outline: none;
+}
+
+/* Dark mode footer */
+body.dark footer { background: #0A0908 !important; }
+
+/* Dark mode hover effects */
+body.dark .hover\:bg-gray-50:hover { background: var(--dm-surface-2) !important; }
+body.dark .hover\:bg-red-50:hover { background: rgba(220,38,38,0.1) !important; }
+
+/* Dark mode hero */
+body.dark .hero-section { background: var(--dm-bg) !important; }
+body.dark .hero-section .text-charcoal { color: var(--dm-text) !important; }
+body.dark .hero-section .text-\[\#5a5147\] { color: var(--dm-text-muted) !important; }
+
+/* Dark mode CTA button in hero */
+body.dark .hero-section .bg-white { background: var(--dm-surface) !important; }
+body.dark .hero-section .hover\:bg-charcoal:hover { background: var(--dm-surface-2) !important; color: var(--dm-text) !important; }
+
+/* ── Admin Page Dark Mode Overrides ─────────────────── */
+/* Hardcoded background colors */
+body.dark .bg-\[\#FAFAFA\] { background: var(--dm-surface) !important; }
+body.dark .bg-white { background: var(--dm-surface) !important; }
+body.dark .bg-\[\#fdfbf7\] { background: var(--dm-bg) !important; }
+body.dark .bg-\[\#f5f0e8\] { background: var(--dm-surface-2) !important; }
+body.dark .bg-\[\#f0ebe3\] { background: var(--dm-surface-2) !important; }
+body.dark .bg-\[\#f9f6f1\] { background: var(--dm-surface-2) !important; }
+body.dark .bg-\[\#f5ede0\] { background: var(--dm-surface-2) !important; }
+body.dark .bg-\[\#fef9ec\] { background: var(--dm-surface) !important; }
+body.dark .bg-\[\#fee2e2\] { background: rgba(220,38,38,0.1) !important; }
+body.dark .bg-\[\#f8f5f0\] { background: var(--dm-surface-2) !important; }
+
+/* Hardcoded text colors */
+body.dark .text-\[\#1A1A1A\] { color: var(--dm-text) !important; }
+body.dark .text-\[\#6B7280\] { color: var(--dm-text-muted) !important; }
+body.dark .text-\[\#9CA3AF\] { color: var(--dm-text-subtle) !important; }
+body.dark .text-\[\#4B5563\] { color: var(--dm-text-muted) !important; }
+body.dark .text-\[\#5a5147\] { color: var(--dm-text-muted) !important; }
+
+/* Hardcoded border colors */
+body.dark .border-\[\#e8e0d6\] { border-color: var(--dm-border) !important; }
+body.dark .border-\[\#f0ebe3\] { border-color: var(--dm-border) !important; }
+body.dark .border-\[\#f8f5f0\] { border-color: var(--dm-border) !important; }
+body.dark .border-\[\#fee2e2\] { border-color: rgba(220,38,38,0.2) !important; }
+body.dark .border-gray-200 { border-color: var(--dm-border) !important; }
+
+/* Admin card shadows */
+body.dark .shadow-\[0_4px_24px_rgba\(0\,0\,0\,0\,05\)\] { box-shadow: 0 4px 24px rgba(0,0,0,0.3) !important; }
+body.dark .shadow-\[0_2px_12px_rgba\(0\,0\,0\,0\,04\)\] { box-shadow: 0 2px 12px rgba(0,0,0,0.25) !important; }
+body.dark .shadow-\[0_24px_64px_rgba\(0\,0\,0\,0\,2\)\] { box-shadow: 0 24px 64px rgba(0,0,0,0.5) !important; }
+
+/* Admin-specific: delete button hover */
+body.dark .hover\:bg-red-50:hover { background: rgba(220,38,38,0.12) !important; }
+
+/* Admin inputs */
+body.dark input, body.dark textarea, body.dark select {
+  background-color: var(--dm-surface-2) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+body.dark input::placeholder, body.dark textarea::placeholder {
+  color: var(--dm-text-subtle) !important;
+}
+
+/* Admin custom border rgba values */
+body.dark .border-\[rgba\(207\,160\,82\,0\.12\)\] { border-color: rgba(212,168,83,0.15) !important; }
+body.dark .border-\[rgba\(207\,160\,82\,0\.08\)\] { border-color: rgba(212,168,83,0.1) !important; }
+body.dark .border-\[rgba\(207\,160\,82\,0\.3\)\] { border-color: rgba(212,168,83,0.4) !important; }
+body.dark .border-\[rgba\(0\,0\,0\,0\.05\)\] { border-color: var(--dm-border) !important; }
+
+/* Admin active tab bg (gold bg + white text) */
+body.dark .bg-gold { background: #B8883A !important; }
+body.dark .bg-\[\#CFA052\] { background: var(--gold-dark) !important; }
+
+/* Admin stat card number color */
+body.dark .text-\[\#1A1A1A\] { color: var(--dm-text) !important; }
+
+/* Admin table hover */
+body.dark .hover\:bg-\[\#FAFAFA\]:hover { background: var(--dm-surface-2) !important; }
+
+/* Admin select dropdown */
+body.dark select {
+  background-color: var(--dm-surface-2) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Admin bg for the entire page wrapper */
+body.dark .admin-bg { background: var(--dm-bg) !important; }
+
+/* Admin status badge hardcoded inline backgrounds */
+body.dark [style*="background: #dcfce7"] { background: rgba(34,197,94,0.15) !important; }
+body.dark [style*="background: #dbeafe"] { background: rgba(59,130,246,0.15) !important; }
+body.dark [style*="background: #e0f2fe"] { background: rgba(3,105,161,0.15) !important; }
+body.dark [style*="background: #f3e8ff"] { background: rgba(124,58,237,0.15) !important; }
+body.dark [style*="background: #fef2f2"] { background: rgba(185,28,28,0.15) !important; }
+body.dark [style*="background: #fef9ec"] { background: rgba(146,64,14,0.15) !important; }
+
+/* Chart overrides */
+body.dark .recharts-cartesian-grid-horizontal line,
+body.dark .recharts-cartesian-grid-vertical line { stroke: rgba(245,240,232,0.08) !important; }
+body.dark .recharts-text { fill: var(--dm-text-subtle) !important; }
+
+/* Gold color on admin icons and accents */
+body.dark .text-\[\#CFA052\] { color: var(--gold-light) !important; }
+body.dark .text-\[\#FFD700\] { color: var(--gold-light) !important; }
+body.dark .text-\[\#f87171\] { color: rgba(248,113,113,0.7) !important; }
+body.dark .text-\[\#10b981\] { color: rgba(16,185,129,0.7) !important; }
+body.dark .text-\[\#6366f1\] { color: rgba(99,102,241,0.7) !important; }
+body.dark .text-\[\#f59e0b\] { color: rgba(245,158,11,0.7) !important; }
+
+/* Admin thead background */
+body.dark thead .bg-\[\#f9f6f1\] { background: var(--dm-surface-2) !important; }
+
+/* Admin stat card hover */
+body.dark .hover\:-translate-y-1:hover { transform: translateY(-2px); }
+
+/* Admin chart area gradient stop colors */
+body.dark [stop-color="#CFA052"] { stop-color: var(--gold) !important; }
+
+/* Admin close button in user modal */
+body.dark .hover\:bg-\[\#e8e0d6\]:hover { background: var(--dm-surface-2) !important; }
+body.dark .hover\:bg-\[\#fef9ec\]:hover { background: var(--dm-surface-2) !important; }
+
+/* Fix table row backgrounds for dark mode */
+body.dark .border-b-\[\#f0ebe3\] { border-color: var(--dm-border) !important; }
+body.dark .border-b-\[\#f8f5f0\] { border-color: var(--dm-border) !important; }
+body.dark .border-b-\[\#f5f0e8\] { border-color: var(--dm-border) !important; }
+
+/* Admin page bg-gray-100 for pagination buttons */
+body.dark .bg-gray-100 { background: var(--dm-surface-2) !important; color: var(--dm-text-subtle) !important; }
+
+/* Admin img placeholder bg */
+body.dark .bg-\[\#f5ede0\] { background: var(--dm-surface-2) !important; }
+
+/* Admin modal overlay */
+body.dark .bg-black\/50 { background: rgba(0,0,0,0.7) !important; }
+
+/* Admin modal */
+body.dark .shadow-\[0_24px_64px_rgba\(0\,0\,0\,0\.2\)\] { box-shadow: 0 24px 64px rgba(0,0,0,0.6) !important; }
+
+/* Admin recharts SVG text elements */
+body.dark .recharts-wrapper { color: var(--dm-text-subtle) !important; }
+
+/* Admin: stat subtitle text */
+body.dark .text-\[\#CFA052\] { color: var(--gold-light) !important; }
+
+/* Admin: tab active bg + text */
+body.dark .text-white { color: var(--dm-text) !important; }
+
+/* Admin: thead text */
+body.dark th.text-\[\#9CA3AF\] { color: var(--dm-text-subtle) !important; }
+
+/* Admin: table cell muted text */
+body.dark td.text-\[\#6B7280\] { color: var(--dm-text-muted) !important; }
+
+/* Admin: order status table first column */
+body.dark td.text-\[\#9CA3AF\] { color: var(--dm-text-subtle) !important; }
+
+/* Admin: user modal name text */
+body.dark .text-\[\#1A1A1A\] { color: var(--dm-text) !important; }
+
+/* Admin: stat label text */
+body.dark .text-\[\#9CA3AF\] { color: var(--dm-text-subtle) !important; }
+
+/* Admin: delete button icon color */
+body.dark .text-\[\#f87171\] { color: rgba(248,113,113,0.8) !important; }
+
+/* Admin: tab container bg */
+body.dark .bg-\[\#f5f0e8\] { background: var(--dm-surface-2) !important; }
+
+/* Admin: chart CartesianGrid stroke */
+body.dark line[stroke="#f0f0f0"] { stroke: rgba(245,240,232,0.08) !important; }
+
+/* Admin: chart axis line */
+body.dark .recharts-xAxis line,
+body.dark .recharts-yAxis line { stroke: rgba(245,240,232,0.08) !important; }

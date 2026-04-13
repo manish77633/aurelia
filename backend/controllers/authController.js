@@ -7,16 +7,47 @@ const User = require('../models/userModel');
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
+// Validation helpers
+const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
+const validatePassword = (password) => {
+  // At least 8 chars, 1 uppercase, 1 lowercase, 1 number
+  const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  return re.test(password);
+};
+
 // @desc  Register user
 // @route POST /api/auth/register
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  const userExists = await User.findOne({ email });
+
+  // Validate required fields
+  if (!name || !email || !password) {
+    res.status(400);
+    throw new Error('Please provide name, email and password');
+  }
+
+  // Validate email format
+  if (!validateEmail(email)) {
+    res.status(400);
+    throw new Error('Please provide a valid email address');
+  }
+
+  // Validate password strength
+  if (!validatePassword(password)) {
+    res.status(400);
+    throw new Error('Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number');
+  }
+
+  const userExists = await User.findOne({ email: email.toLowerCase() });
   if (userExists) {
     res.status(400);
     throw new Error('User already exists');
   }
-  const user = await User.create({ name, email, password });
+  const user = await User.create({ name, email: email.toLowerCase(), password });
   res.status(201).json({
     _id: user._id,
     name: user.name,
@@ -31,7 +62,20 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route POST /api/auth/login
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+
+  // Validate required fields
+  if (!email || !password) {
+    res.status(400);
+    throw new Error('Please provide email and password');
+  }
+
+  // Validate email format
+  if (!validateEmail(email)) {
+    res.status(400);
+    throw new Error('Please provide a valid email address');
+  }
+
+  const user = await User.findOne({ email: email.toLowerCase() });
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
