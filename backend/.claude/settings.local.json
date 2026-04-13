@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start:*)",
+      "Bash(node server.js)",
+      "Bash(npx cross-env:*)",
+      "Bash(node node_modules/react-scripts/scripts/start.js)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl:*)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill:*)",
+      "Bash(PORT=5001 node server.js)"
+    ]
+  }
+}
