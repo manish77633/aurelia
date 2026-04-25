@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toggleWishlist } from '../slices/wishlistSlice';
 import { addToCart } from '../slices/cartSlice';
 import { toast } from 'react-toastify';
+import ProductSkeletonCard from '../components/ui/ProductSkeletonCard';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -11,7 +12,27 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 export default function WishlistPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items } = useSelector(s => s.wishlist);
+  const { items, loading } = useSelector(s => s.wishlist);
+
+  useEffect(() => {
+    // Optionally fetch if not loaded, but assuming it's fetched on App load or Navbar
+  }, []);
+
+  if (loading) return (
+    <div className="bg-cream min-h-[80vh] py-8 md:py-10 px-4 md:px-12">
+      <div className="max-w-[1100px] mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <FavoriteIcon sx={{ color: '#CFA052', fontSize: 22 }} />
+          <h1 className="font-playfair text-2xl md:text-[2rem] font-bold text-charcoal">My Wishlist</h1>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ProductSkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   if (items.length === 0) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-5 px-6 text-center">

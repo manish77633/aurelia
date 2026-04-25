@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProducts } from '../slices/productSlice';
 import ProductCard from '../components/ui/ProductCard';
+import ProductSkeletonCard from '../components/ui/ProductSkeletonCard';
 import Loader from '../components/ui/Loader';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -233,9 +234,10 @@ export default function ShopPage() {
           </div>
 
           {loading ? (
-            <div className="py-20 flex flex-col items-center justify-center gap-4">
-              <Loader />
-              <p className="text-gray-400 text-sm animate-pulse">Curating products...</p>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <ProductSkeletonCard key={i} />
+              ))}
             </div>
           ) : (
             <>

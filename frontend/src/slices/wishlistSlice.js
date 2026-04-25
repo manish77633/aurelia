@@ -20,7 +20,9 @@ const wishlistSlice = createSlice({
     resetWishlist: (state) => { state.items = []; },
   },
   extraReducers: (b) => {
-    b.addCase(fetchWishlist.fulfilled, (s, a) => { s.items = a.payload?.products || []; });
+    b.addCase(fetchWishlist.pending, (s) => { s.loading = true; });
+    b.addCase(fetchWishlist.fulfilled, (s, a) => { s.loading = false; s.items = a.payload?.products || []; });
+    b.addCase(fetchWishlist.rejected, (s) => { s.loading = false; });
     b.addCase(toggleWishlist.fulfilled, (s, a) => { s.items = a.payload?.wishlist?.products || a.payload?.products || []; });
   },
 });

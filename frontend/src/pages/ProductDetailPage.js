@@ -8,6 +8,7 @@ import { addToCart } from '../slices/cartSlice';
 import { toggleWishlist } from '../slices/wishlistSlice';
 import Loader from '../components/ui/Loader';
 import ProductCard from '../components/ui/ProductCard';
+import ProductSkeletonCard from '../components/ui/ProductSkeletonCard';
 import QuickViewModal from '../components/ui/QuickViewModal';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -27,6 +28,7 @@ export default function ProductDetailPage() {
   const { items: wishlist } = useSelector((s) => s.wishlist);
   const isWished = wishlist.some(p => (p._id || p) === id);
   const [related, setRelated] = useState([]);
+  const [relatedLoading, setRelatedLoading] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
   const [hoverStar, setHoverStar] = useState(0);
@@ -40,9 +42,11 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     dispatch(fetchProductById(id));
+    setRelatedLoading(true);
     axios.get(`${process.env.REACT_APP_API_URL}/products/${id}/related`)
       .then(r => setRelated(r.data))
-      .catch(() => { });
+      .catch(() => { })
+      .finally(() => setRelatedLoading(false));
   }, [dispatch, id]);
 
   const handleCart = () => {
@@ -235,14 +239,20 @@ export default function ProductDetailPage() {
         </div>
 
         {/* MORE FROM AURELIA */}
-        {related.length > 0 && (
+        {(relatedLoading || related.length > 0) && (
           <div>
             <div className="text-center mb-9">
               <span className="text-[0.7rem] font-bold tracking-[4px] text-gold uppercase">You May Also Like</span>
               <h2 className="font-playfair text-2xl md:text-[1.8rem] font-bold mt-2 text-charcoal">More from Aurelia</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {related.map(p => <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />)}
+              {relatedLoading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <ProductSkeletonCard key={i} />
+                ))
+              ) : (
+                related.map(p => <ProductCard key={p._id} product={p} onQuickView={setQuickViewProduct} />)
+              )}
             </div>
           </div>
         )}
