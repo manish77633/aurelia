@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { fetchProducts } from '../slices/productSlice';
 import ProductCard from '../components/ui/ProductCard';
 import QuickViewModal from '../components/ui/QuickViewModal';
-import Loader from '../components/ui/Loader';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
@@ -15,6 +14,22 @@ import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+
+const ProductSkeletonCard = () => (
+  <div className="overflow-hidden rounded-lg border border-gray-50 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+    <div className="h-48 animate-pulse bg-gradient-to-br from-[#f5f0e8] via-[#fbf7ef] to-[#eee4d6] sm:h-64 md:h-60 lg:h-64" />
+    <div className="flex min-h-[146px] flex-col px-3 py-3.5 pb-4 sm:px-4 sm:py-4 sm:pb-5">
+      <div className="mb-2 h-3 w-16 animate-pulse rounded-full bg-[#eadfce]" />
+      <div className="mb-2 h-4 w-full animate-pulse rounded-full bg-[#eee7dc]" />
+      <div className="mb-2.5 h-4 w-2/3 animate-pulse rounded-full bg-[#eee7dc]" />
+      <div className="mb-3 h-3 w-20 animate-pulse rounded-full bg-[#f0e8dc]" />
+      <div className="mt-auto flex items-center justify-between">
+        <div className="h-5 w-16 animate-pulse rounded-full bg-[#e6dccb]" />
+        <div className="h-9 w-14 animate-pulse rounded-lg bg-[#ead8ba] sm:w-9 sm:rounded-full" />
+      </div>
+    </div>
+  </div>
+);
 
 // ── MARQUEE DATA ──────────────────────────────────────────────
 const MARQUEE_ITEMS = [
@@ -45,6 +60,7 @@ export default function HomePage() {
   const dispatch = useDispatch();
   const { list: products, loading } = useSelector((s) => s.products);
   const [openFaq, setOpenFaq] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('Men');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const pageRef = useRef(null);
 
@@ -69,9 +85,11 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => { dispatch(fetchProducts({ featured: 'true' })); }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchProducts({ gender: activeCategory, limit: 12 }));
+  }, [dispatch, activeCategory]);
 
-  const featured = products.filter(p => p.featured).slice(0, 8);
+  const categoryProducts = products.filter(p => p.gender === activeCategory).slice(0, 12);
   const marqueeDbl = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
@@ -178,9 +196,9 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURED COLLECTION ──────────────────────── */}
-      <section className="py-12 md:py-16 px-6 md:px-12 bg-cream">
+      <section className="py-14 md:py-16 px-4 sm:px-6 md:px-12 bg-cream">
         <div className="max-w-[1280px] mx-auto">
-          <div className="text-center mb-10 md:mb-12">
+          <div className="text-center mb-7 md:mb-10">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -195,7 +213,7 @@ export default function HomePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="font-playfair text-3xl md:text-5xl font-bold text-charcoal mb-4"
+              className="font-playfair text-[2rem] md:text-5xl font-bold text-charcoal mb-3 md:mb-4 leading-tight"
             >
               Curated for You
             </motion.h2>
@@ -209,28 +227,62 @@ export default function HomePage() {
               An exquisite selection of our finest pieces, handpicked by our in-house curators.
             </motion.p>
           </div>
-          {loading ? <Loader /> : (
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+            className="mx-auto mb-7 grid max-w-[420px] grid-cols-2 gap-2 rounded-2xl border border-[#CFA052]/15 bg-white p-1.5 shadow-[0_8px_28px_rgba(207,160,82,0.10)]"
+          >
+            {['Men', 'Women'].map((category) => {
+              const isActive = activeCategory === category;
+
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => setActiveCategory(category)}
+                  className={`rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 ${
+                    isActive
+                      ? 'bg-gold text-white shadow-[0_8px_20px_rgba(207,160,82,0.32)]'
+                      : 'bg-[#fdfbf7] text-[#8a7a62] hover:bg-[#f5f0e8] hover:text-gold'
+                  }`}
+                >
+                  {category}
+                </button>
+              );
+            })}
+          </motion.div>
+
+          {loading ? (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <ProductSkeletonCard key={i} />
+              ))}
+            </div>
+          ) : (
             <motion.div
+              key={activeCategory}
               initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 lg:gap-6"
             >
-              {featured.map((p, i) => (
+              {categoryProducts.map((p, i) => (
                 <motion.div
                   key={p._id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.35, delay: i * 0.035, ease: [0.22, 1, 0.36, 1] }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <ProductCard product={p} onQuickView={setQuickViewProduct} />
                 </motion.div>
               ))}
             </motion.div>
           )}
-          <div className="text-center mt-12 md:mt-16">
+          <div className="text-center mt-9 md:mt-16">
             <button className="btn-gold inline-flex items-center gap-2" onClick={() => navigate('/shop')}>
               View Full Collection <ArrowForwardIcon sx={{ fontSize: 18 }} />
             </button>

@@ -12,10 +12,12 @@ export const fetchProducts = createAsyncThunk('products/fetchAll', async (params
     return data;
   } catch (e) { return rejectWithValue(e.response?.data?.message || 'Failed'); }
 });
+
 export const fetchProductById = createAsyncThunk('products/fetchOne', async (id, { rejectWithValue }) => {
   try { const { data } = await axios.get(`${API}/products/${id}`); return data; }
   catch (e) { return rejectWithValue(e.response?.data?.message || 'Failed'); }
 });
+
 export const submitReview = createAsyncThunk('products/review', async ({ productId, rating, comment }, { getState, rejectWithValue }) => {
   try { await axios.post(`${API}/products/${productId}/reviews`, { rating, comment }, { headers: getH(getState) }); return true; }
   catch (e) { return rejectWithValue(e.response?.data?.message || 'Review failed'); }
@@ -39,11 +41,8 @@ const productSlice = createSlice({
         s.total = data.length;
       } else if (data && data.products) {
         const { products, page, pages, total } = data;
-        if (page === 1) {
-          s.list = products;
-        } else {
-          s.list = [...s.list, ...products];
-        }
+        // Standard pagination: Overwrite list with current page results
+        s.list = products;
         s.page = page;
         s.pages = pages;
         s.total = total;

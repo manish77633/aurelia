@@ -45,21 +45,20 @@ export default function ProductCard({ product, onQuickView }) {
       onClick={() => navigate(`/product/${product._id}`)}
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-50 overflow-hidden cursor-pointer relative transition-all duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
+      className="bg-white rounded-lg shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-50 overflow-hidden cursor-pointer relative transition-all duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
 
       {/* Image */}
-      <div className="relative h-48 md:h-60 overflow-hidden bg-[#f5f0e8] group">
+      <div className="relative aspect-[4/5] sm:aspect-square overflow-hidden bg-gradient-to-br from-[#f8f3eb] via-[#fffaf2] to-[#eee4d6] group">
         <img
           src={imgSrc}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
         {product.featured && (
-          <span className="absolute top-3 left-3 bg-gold text-white text-[0.68rem] font-bold px-2.5 py-1 rounded-full tracking-wider">
+          <span className="absolute top-3 left-3 bg-gold text-white text-[0.64rem] sm:text-[0.68rem] font-bold px-2.5 py-1 rounded-full tracking-wider shadow-[0_6px_18px_rgba(0,0,0,0.12)]">
             FEATURED
           </span>
         )}
-        {/* Wishlist btn */}
         <button
           onClick={handleWishlist}
           className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm border-none w-9 h-9 rounded-full flex items-center justify-center cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-200 hover:scale-110 hover:bg-white">
@@ -69,7 +68,7 @@ export default function ProductCard({ product, onQuickView }) {
         </button>
 
         {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3">
+        <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex flex-col items-center justify-center gap-3">
           <button
             onClick={handleQuickView}
             className="px-5 py-2.5 bg-white text-charcoal rounded-full text-[0.75rem] font-bold uppercase tracking-wider hover:bg-gold hover:text-white transition-all duration-200"
@@ -86,19 +85,20 @@ export default function ProductCard({ product, onQuickView }) {
       </div>
 
       {/* Body */}
-      <div className="px-4 py-3.5 pb-5">
+      <div className="px-3 py-3.5 pb-4 sm:px-4 sm:py-4 sm:pb-5 min-h-[146px] flex flex-col">
         <div className="text-[0.65rem] font-bold tracking-[2px] text-gold uppercase mb-1.5">{product.category}</div>
-        <div className="font-playfair text-[1rem] font-semibold text-charcoal mb-2 leading-snug line-clamp-2">{product.name}</div>
+        <div className="font-playfair text-[0.95rem] sm:text-[1.05rem] md:text-[1rem] font-semibold text-charcoal mb-2 leading-snug line-clamp-2">{product.name}</div>
         <div className="flex items-center gap-1 mb-2.5">
           <StarIcon sx={{ fontSize: 14, color: '#CFA052' }} />
           <span className="text-[0.78rem] font-semibold text-charcoal">{product.rating?.toFixed(1)}</span>
           <span className="text-[0.75rem] text-gray-400">({product.numReviews})</span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="font-playfair text-[1.2rem] font-bold text-charcoal">${product.price.toLocaleString()}</span>
+        <div className="flex items-center justify-between mt-auto">
+          <span className="font-playfair text-[1.05rem] sm:text-[1.2rem] font-bold text-charcoal">${product.price.toLocaleString()}</span>
           <button
             onClick={handleCart}
-            className="bg-gold border-none w-9 h-9 rounded-full flex items-center justify-center cursor-pointer text-white shadow-[0_3px_12px_rgba(207,160,82,0.4)] transition-all duration-200 hover:scale-110 hover:shadow-[0_6px_20px_rgba(207,160,82,0.6)]">
+            className="bg-gold border-none h-9 px-3 sm:w-9 sm:px-0 rounded-lg sm:rounded-full flex items-center justify-center gap-1 cursor-pointer text-white text-[0.72rem] font-bold shadow-[0_3px_12px_rgba(207,160,82,0.4)] transition-all duration-200 hover:scale-105 hover:shadow-[0_6px_20px_rgba(207,160,82,0.6)]">
+            <span className="sm:hidden">Add</span>
             <ShoppingCartOutlinedIcon sx={{ fontSize: 16 }} />
           </button>
         </div>
