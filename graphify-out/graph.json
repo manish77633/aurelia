@@ -1,0 +1,1450 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "get_pin.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\get_pin.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_get_pin_js",
+      "community": 3,
+      "norm_label": "get_pin.js"
+    },
+    {
+      "label": "getUrl()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\get_pin.js",
+      "source_location": "L1",
+      "id": "get_pin_geturl",
+      "community": 3,
+      "norm_label": "geturl()"
+    },
+    {
+      "label": "test.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\test.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_test_js",
+      "community": 35,
+      "norm_label": "test.js"
+    },
+    {
+      "label": "seeder.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\seeder.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_seeder_js",
+      "community": 4,
+      "norm_label": "seeder.js"
+    },
+    {
+      "label": "seedDB()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\seeder.js",
+      "source_location": "L193",
+      "id": "seeder_seeddb",
+      "community": 4,
+      "norm_label": "seeddb()"
+    },
+    {
+      "label": "server.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\server.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_server_js",
+      "community": 36,
+      "norm_label": "server.js"
+    },
+    {
+      "label": "db.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\config\\db.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_config_db_js",
+      "community": 5,
+      "norm_label": "db.js"
+    },
+    {
+      "label": "connectDB()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\config\\db.js",
+      "source_location": "L3",
+      "id": "db_connectdb",
+      "community": 5,
+      "norm_label": "connectdb()"
+    },
+    {
+      "label": "passport.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\config\\passport.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_config_passport_js",
+      "community": 37,
+      "norm_label": "passport.js"
+    },
+    {
+      "label": "adminController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\adminController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_admincontroller_js",
+      "community": 38,
+      "norm_label": "admincontroller.js"
+    },
+    {
+      "label": "aiController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\aiController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_aicontroller_js",
+      "community": 6,
+      "norm_label": "aicontroller.js"
+    },
+    {
+      "label": "getModel()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\aiController.js",
+      "source_location": "L5",
+      "id": "aicontroller_getmodel",
+      "community": 6,
+      "norm_label": "getmodel()"
+    },
+    {
+      "label": "authController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "community": 1,
+      "norm_label": "authcontroller.js"
+    },
+    {
+      "label": "generateToken()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L7",
+      "id": "authcontroller_generatetoken",
+      "community": 1,
+      "norm_label": "generatetoken()"
+    },
+    {
+      "label": "validateEmail()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L11",
+      "id": "authcontroller_validateemail",
+      "community": 1,
+      "norm_label": "validateemail()"
+    },
+    {
+      "label": "validatePassword()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L16",
+      "id": "authcontroller_validatepassword",
+      "community": 1,
+      "norm_label": "validatepassword()"
+    },
+    {
+      "label": "cartController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\cartController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_cartcontroller_js",
+      "community": 39,
+      "norm_label": "cartcontroller.js"
+    },
+    {
+      "label": "orderController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\orderController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_ordercontroller_js",
+      "community": 2,
+      "norm_label": "ordercontroller.js"
+    },
+    {
+      "label": "getTransporter()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\orderController.js",
+      "source_location": "L7",
+      "id": "ordercontroller_gettransporter",
+      "community": 2,
+      "norm_label": "gettransporter()"
+    },
+    {
+      "label": "sendStatusEmail()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\orderController.js",
+      "source_location": "L24",
+      "id": "ordercontroller_sendstatusemail",
+      "community": 2,
+      "norm_label": "sendstatusemail()"
+    },
+    {
+      "label": "paymentController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\paymentController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_paymentcontroller_js",
+      "community": 40,
+      "norm_label": "paymentcontroller.js"
+    },
+    {
+      "label": "productController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\productController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_productcontroller_js",
+      "community": 7,
+      "norm_label": "productcontroller.js"
+    },
+    {
+      "label": "streamUpload()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\productController.js",
+      "source_location": "L10",
+      "id": "productcontroller_streamupload",
+      "community": 7,
+      "norm_label": "streamupload()"
+    },
+    {
+      "label": "wishlistController.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\wishlistController.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_controllers_wishlistcontroller_js",
+      "community": 41,
+      "norm_label": "wishlistcontroller.js"
+    },
+    {
+      "label": "authMiddleware.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\middleware\\authMiddleware.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_middleware_authmiddleware_js",
+      "community": 8,
+      "norm_label": "authmiddleware.js"
+    },
+    {
+      "label": "admin()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\middleware\\authMiddleware.js",
+      "source_location": "L24",
+      "id": "authmiddleware_admin",
+      "community": 8,
+      "norm_label": "admin()"
+    },
+    {
+      "label": "rateLimiter.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\middleware\\rateLimiter.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_middleware_ratelimiter_js",
+      "community": 42,
+      "norm_label": "ratelimiter.js"
+    },
+    {
+      "label": "uploadMiddleware.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\middleware\\uploadMiddleware.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_middleware_uploadmiddleware_js",
+      "community": 43,
+      "norm_label": "uploadmiddleware.js"
+    },
+    {
+      "label": "cartModel.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\models\\cartModel.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_models_cartmodel_js",
+      "community": 44,
+      "norm_label": "cartmodel.js"
+    },
+    {
+      "label": "orderModel.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\models\\orderModel.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_models_ordermodel_js",
+      "community": 45,
+      "norm_label": "ordermodel.js"
+    },
+    {
+      "label": "productModel.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\models\\productModel.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_models_productmodel_js",
+      "community": 46,
+      "norm_label": "productmodel.js"
+    },
+    {
+      "label": "userModel.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\models\\userModel.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_models_usermodel_js",
+      "community": 47,
+      "norm_label": "usermodel.js"
+    },
+    {
+      "label": "wishlistModel.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\models\\wishlistModel.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_models_wishlistmodel_js",
+      "community": 48,
+      "norm_label": "wishlistmodel.js"
+    },
+    {
+      "label": "adminRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\adminRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_adminroutes_js",
+      "community": 49,
+      "norm_label": "adminroutes.js"
+    },
+    {
+      "label": "authRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\authRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_authroutes_js",
+      "community": 50,
+      "norm_label": "authroutes.js"
+    },
+    {
+      "label": "cartRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\cartRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_cartroutes_js",
+      "community": 51,
+      "norm_label": "cartroutes.js"
+    },
+    {
+      "label": "chatRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\chatRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_chatroutes_js",
+      "community": 52,
+      "norm_label": "chatroutes.js"
+    },
+    {
+      "label": "orderRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\orderRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_orderroutes_js",
+      "community": 53,
+      "norm_label": "orderroutes.js"
+    },
+    {
+      "label": "paymentRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\paymentRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_paymentroutes_js",
+      "community": 54,
+      "norm_label": "paymentroutes.js"
+    },
+    {
+      "label": "productRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\productRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_productroutes_js",
+      "community": 55,
+      "norm_label": "productroutes.js"
+    },
+    {
+      "label": "reviewRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\reviewRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_reviewroutes_js",
+      "community": 56,
+      "norm_label": "reviewroutes.js"
+    },
+    {
+      "label": "wishlistRoutes.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\backend\\routes\\wishlistRoutes.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_backend_routes_wishlistroutes_js",
+      "community": 57,
+      "norm_label": "wishlistroutes.js"
+    },
+    {
+      "label": "postcss.config.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\postcss.config.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_postcss_config_js",
+      "community": 58,
+      "norm_label": "postcss.config.js"
+    },
+    {
+      "label": "tailwind.config.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\tailwind.config.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_tailwind_config_js",
+      "community": 59,
+      "norm_label": "tailwind.config.js"
+    },
+    {
+      "label": "App.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_app_js",
+      "community": 0,
+      "norm_label": "app.js"
+    },
+    {
+      "label": "ProtectedRoute()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L31",
+      "id": "app_protectedroute",
+      "community": 0,
+      "norm_label": "protectedroute()"
+    },
+    {
+      "label": "AdminRoute()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L35",
+      "id": "app_adminroute",
+      "community": 0,
+      "norm_label": "adminroute()"
+    },
+    {
+      "label": "ScrollToTop()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L40",
+      "id": "app_scrolltotop",
+      "community": 0,
+      "norm_label": "scrolltotop()"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L46",
+      "id": "app_app",
+      "community": 0,
+      "norm_label": "app()"
+    },
+    {
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\index.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_index_js",
+      "community": 60,
+      "norm_label": "index.js"
+    },
+    {
+      "label": "store.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\store.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_store_js",
+      "community": 61,
+      "norm_label": "store.js"
+    },
+    {
+      "label": "Chatbot.jsx",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\Chatbot.jsx",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_chatbot_jsx",
+      "community": 9,
+      "norm_label": "chatbot.jsx"
+    },
+    {
+      "label": "Chatbot()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\Chatbot.jsx",
+      "source_location": "L15",
+      "id": "chatbot_chatbot",
+      "community": 9,
+      "norm_label": "chatbot()"
+    },
+    {
+      "label": "Footer.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\layout\\Footer.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_layout_footer_js",
+      "community": 10,
+      "norm_label": "footer.js"
+    },
+    {
+      "label": "Footer()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\layout\\Footer.js",
+      "source_location": "L10",
+      "id": "footer_footer",
+      "community": 10,
+      "norm_label": "footer()"
+    },
+    {
+      "label": "Navbar.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\layout\\Navbar.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_layout_navbar_js",
+      "community": 11,
+      "norm_label": "navbar.js"
+    },
+    {
+      "label": "Navbar()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\layout\\Navbar.js",
+      "source_location": "L23",
+      "id": "navbar_navbar",
+      "community": 11,
+      "norm_label": "navbar()"
+    },
+    {
+      "label": "Loader.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\Loader.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_ui_loader_js",
+      "community": 12,
+      "norm_label": "loader.js"
+    },
+    {
+      "label": "Loader()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\Loader.js",
+      "source_location": "L3",
+      "id": "loader_loader",
+      "community": 12,
+      "norm_label": "loader()"
+    },
+    {
+      "label": "PageTransition.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\PageTransition.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_ui_pagetransition_js",
+      "community": 13,
+      "norm_label": "pagetransition.js"
+    },
+    {
+      "label": "PageTransition()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\PageTransition.js",
+      "source_location": "L3",
+      "id": "pagetransition_pagetransition",
+      "community": 13,
+      "norm_label": "pagetransition()"
+    },
+    {
+      "label": "ProductCard.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\ProductCard.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_ui_productcard_js",
+      "community": 14,
+      "norm_label": "productcard.js"
+    },
+    {
+      "label": "ProductCard()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\ProductCard.js",
+      "source_location": "L13",
+      "id": "productcard_productcard",
+      "community": 14,
+      "norm_label": "productcard()"
+    },
+    {
+      "label": "QuickViewModal.jsx",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\QuickViewModal.jsx",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_ui_quickviewmodal_jsx",
+      "community": 15,
+      "norm_label": "quickviewmodal.jsx"
+    },
+    {
+      "label": "QuickViewModal()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\QuickViewModal.jsx",
+      "source_location": "L12",
+      "id": "quickviewmodal_quickviewmodal",
+      "community": 15,
+      "norm_label": "quickviewmodal()"
+    },
+    {
+      "label": "StarRating.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\StarRating.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_components_ui_starrating_js",
+      "community": 16,
+      "norm_label": "starrating.js"
+    },
+    {
+      "label": "StarRating()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\StarRating.js",
+      "source_location": "L3",
+      "id": "starrating_starrating",
+      "community": 16,
+      "norm_label": "starrating()"
+    },
+    {
+      "label": "AboutPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AboutPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_aboutpage_js",
+      "community": 17,
+      "norm_label": "aboutpage.js"
+    },
+    {
+      "label": "AboutPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AboutPage.js",
+      "source_location": "L15",
+      "id": "aboutpage_aboutpage",
+      "community": 17,
+      "norm_label": "aboutpage()"
+    },
+    {
+      "label": "AdminLoginPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AdminLoginPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_adminloginpage_js",
+      "community": 18,
+      "norm_label": "adminloginpage.js"
+    },
+    {
+      "label": "AdminLoginPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AdminLoginPage.js",
+      "source_location": "L9",
+      "id": "adminloginpage_adminloginpage",
+      "community": 18,
+      "norm_label": "adminloginpage()"
+    },
+    {
+      "label": "AdminPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AdminPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_adminpage_js",
+      "community": 19,
+      "norm_label": "adminpage.js"
+    },
+    {
+      "label": "AdminPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AdminPage.js",
+      "source_location": "L48",
+      "id": "adminpage_adminpage",
+      "community": 19,
+      "norm_label": "adminpage()"
+    },
+    {
+      "label": "CartPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\CartPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_cartpage_js",
+      "community": 20,
+      "norm_label": "cartpage.js"
+    },
+    {
+      "label": "CartPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\CartPage.js",
+      "source_location": "L14",
+      "id": "cartpage_cartpage",
+      "community": 20,
+      "norm_label": "cartpage()"
+    },
+    {
+      "label": "CheckoutPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\CheckoutPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_checkoutpage_js",
+      "community": 21,
+      "norm_label": "checkoutpage.js"
+    },
+    {
+      "label": "CheckoutPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\CheckoutPage.js",
+      "source_location": "L15",
+      "id": "checkoutpage_checkoutpage",
+      "community": 21,
+      "norm_label": "checkoutpage()"
+    },
+    {
+      "label": "HomePage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\HomePage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_homepage_js",
+      "community": 22,
+      "norm_label": "homepage.js"
+    },
+    {
+      "label": "HomePage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\HomePage.js",
+      "source_location": "L43",
+      "id": "homepage_homepage",
+      "community": 22,
+      "norm_label": "homepage()"
+    },
+    {
+      "label": "LoginPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\LoginPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_loginpage_js",
+      "community": 23,
+      "norm_label": "loginpage.js"
+    },
+    {
+      "label": "LoginPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\LoginPage.js",
+      "source_location": "L13",
+      "id": "loginpage_loginpage",
+      "community": 23,
+      "norm_label": "loginpage()"
+    },
+    {
+      "label": "OAuthSuccess.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\OAuthSuccess.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_oauthsuccess_js",
+      "community": 24,
+      "norm_label": "oauthsuccess.js"
+    },
+    {
+      "label": "OAuthSuccess()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\OAuthSuccess.js",
+      "source_location": "L6",
+      "id": "oauthsuccess_oauthsuccess",
+      "community": 24,
+      "norm_label": "oauthsuccess()"
+    },
+    {
+      "label": "OrdersPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\OrdersPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_orderspage_js",
+      "community": 25,
+      "norm_label": "orderspage.js"
+    },
+    {
+      "label": "OrdersPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\OrdersPage.js",
+      "source_location": "L20",
+      "id": "orderspage_orderspage",
+      "community": 25,
+      "norm_label": "orderspage()"
+    },
+    {
+      "label": "ProductDetailPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ProductDetailPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_productdetailpage_js",
+      "community": 26,
+      "norm_label": "productdetailpage.js"
+    },
+    {
+      "label": "ProductDetailPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ProductDetailPage.js",
+      "source_location": "L21",
+      "id": "productdetailpage_productdetailpage",
+      "community": 26,
+      "norm_label": "productdetailpage()"
+    },
+    {
+      "label": "ProfilePage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ProfilePage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_profilepage_js",
+      "community": 27,
+      "norm_label": "profilepage.js"
+    },
+    {
+      "label": "ProfilePage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ProfilePage.js",
+      "source_location": "L13",
+      "id": "profilepage_profilepage",
+      "community": 27,
+      "norm_label": "profilepage()"
+    },
+    {
+      "label": "RegisterPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\RegisterPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_registerpage_js",
+      "community": 28,
+      "norm_label": "registerpage.js"
+    },
+    {
+      "label": "RegisterPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\RegisterPage.js",
+      "source_location": "L14",
+      "id": "registerpage_registerpage",
+      "community": 28,
+      "norm_label": "registerpage()"
+    },
+    {
+      "label": "ShopPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ShopPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_shoppage_js",
+      "community": 29,
+      "norm_label": "shoppage.js"
+    },
+    {
+      "label": "ShopPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ShopPage.js",
+      "source_location": "L26",
+      "id": "shoppage_shoppage",
+      "community": 29,
+      "norm_label": "shoppage()"
+    },
+    {
+      "label": "WishlistPage.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\WishlistPage.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_pages_wishlistpage_js",
+      "community": 30,
+      "norm_label": "wishlistpage.js"
+    },
+    {
+      "label": "WishlistPage()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\WishlistPage.js",
+      "source_location": "L11",
+      "id": "wishlistpage_wishlistpage",
+      "community": 30,
+      "norm_label": "wishlistpage()"
+    },
+    {
+      "label": "authSlice.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\authSlice.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_slices_authslice_js",
+      "community": 62,
+      "norm_label": "authslice.js"
+    },
+    {
+      "label": "cartSlice.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\cartSlice.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_slices_cartslice_js",
+      "community": 31,
+      "norm_label": "cartslice.js"
+    },
+    {
+      "label": "getH()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\cartSlice.js",
+      "source_location": "L5",
+      "id": "cartslice_geth",
+      "community": 31,
+      "norm_label": "geth()"
+    },
+    {
+      "label": "productSlice.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\productSlice.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_slices_productslice_js",
+      "community": 32,
+      "norm_label": "productslice.js"
+    },
+    {
+      "label": "getH()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\productSlice.js",
+      "source_location": "L5",
+      "id": "productslice_geth",
+      "community": 32,
+      "norm_label": "geth()"
+    },
+    {
+      "label": "themeSlice.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\themeSlice.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_slices_themeslice_js",
+      "community": 33,
+      "norm_label": "themeslice.js"
+    },
+    {
+      "label": "getInitialTheme()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\themeSlice.js",
+      "source_location": "L3",
+      "id": "themeslice_getinitialtheme",
+      "community": 33,
+      "norm_label": "getinitialtheme()"
+    },
+    {
+      "label": "wishlistSlice.js",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\wishlistSlice.js",
+      "source_location": "L1",
+      "id": "e_aurelia_v2_frontend_src_slices_wishlistslice_js",
+      "community": 34,
+      "norm_label": "wishlistslice.js"
+    },
+    {
+      "label": "getH()",
+      "file_type": "code",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\wishlistSlice.js",
+      "source_location": "L5",
+      "id": "wishlistslice_geth",
+      "community": 34,
+      "norm_label": "geth()"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\get_pin.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_get_pin_js",
+      "_tgt": "get_pin_geturl",
+      "source": "e_aurelia_v2_get_pin_js",
+      "target": "get_pin_geturl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\seeder.js",
+      "source_location": "L193",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_seeder_js",
+      "_tgt": "seeder_seeddb",
+      "source": "e_aurelia_v2_backend_seeder_js",
+      "target": "seeder_seeddb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\config\\db.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_config_db_js",
+      "_tgt": "db_connectdb",
+      "source": "e_aurelia_v2_backend_config_db_js",
+      "target": "db_connectdb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\aiController.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_aicontroller_js",
+      "_tgt": "aicontroller_getmodel",
+      "source": "e_aurelia_v2_backend_controllers_aicontroller_js",
+      "target": "aicontroller_getmodel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "_tgt": "authcontroller_generatetoken",
+      "source": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "target": "authcontroller_generatetoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "_tgt": "authcontroller_validateemail",
+      "source": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "target": "authcontroller_validateemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\authController.js",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "_tgt": "authcontroller_validatepassword",
+      "source": "e_aurelia_v2_backend_controllers_authcontroller_js",
+      "target": "authcontroller_validatepassword",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\orderController.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_ordercontroller_js",
+      "_tgt": "ordercontroller_gettransporter",
+      "source": "e_aurelia_v2_backend_controllers_ordercontroller_js",
+      "target": "ordercontroller_gettransporter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\orderController.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_ordercontroller_js",
+      "_tgt": "ordercontroller_sendstatusemail",
+      "source": "e_aurelia_v2_backend_controllers_ordercontroller_js",
+      "target": "ordercontroller_sendstatusemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\orderController.js",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "ordercontroller_sendstatusemail",
+      "_tgt": "ordercontroller_gettransporter",
+      "source": "ordercontroller_gettransporter",
+      "target": "ordercontroller_sendstatusemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\controllers\\productController.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_controllers_productcontroller_js",
+      "_tgt": "productcontroller_streamupload",
+      "source": "e_aurelia_v2_backend_controllers_productcontroller_js",
+      "target": "productcontroller_streamupload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\backend\\middleware\\authMiddleware.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_backend_middleware_authmiddleware_js",
+      "_tgt": "authmiddleware_admin",
+      "source": "e_aurelia_v2_backend_middleware_authmiddleware_js",
+      "target": "authmiddleware_admin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_app_js",
+      "_tgt": "app_protectedroute",
+      "source": "e_aurelia_v2_frontend_src_app_js",
+      "target": "app_protectedroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_app_js",
+      "_tgt": "app_adminroute",
+      "source": "e_aurelia_v2_frontend_src_app_js",
+      "target": "app_adminroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_app_js",
+      "_tgt": "app_scrolltotop",
+      "source": "e_aurelia_v2_frontend_src_app_js",
+      "target": "app_scrolltotop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\App.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_app_js",
+      "_tgt": "app_app",
+      "source": "e_aurelia_v2_frontend_src_app_js",
+      "target": "app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\Chatbot.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_chatbot_jsx",
+      "_tgt": "chatbot_chatbot",
+      "source": "e_aurelia_v2_frontend_src_components_chatbot_jsx",
+      "target": "chatbot_chatbot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\layout\\Footer.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_layout_footer_js",
+      "_tgt": "footer_footer",
+      "source": "e_aurelia_v2_frontend_src_components_layout_footer_js",
+      "target": "footer_footer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\layout\\Navbar.js",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_layout_navbar_js",
+      "_tgt": "navbar_navbar",
+      "source": "e_aurelia_v2_frontend_src_components_layout_navbar_js",
+      "target": "navbar_navbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\Loader.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_ui_loader_js",
+      "_tgt": "loader_loader",
+      "source": "e_aurelia_v2_frontend_src_components_ui_loader_js",
+      "target": "loader_loader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\PageTransition.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_ui_pagetransition_js",
+      "_tgt": "pagetransition_pagetransition",
+      "source": "e_aurelia_v2_frontend_src_components_ui_pagetransition_js",
+      "target": "pagetransition_pagetransition",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\ProductCard.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_ui_productcard_js",
+      "_tgt": "productcard_productcard",
+      "source": "e_aurelia_v2_frontend_src_components_ui_productcard_js",
+      "target": "productcard_productcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\QuickViewModal.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_ui_quickviewmodal_jsx",
+      "_tgt": "quickviewmodal_quickviewmodal",
+      "source": "e_aurelia_v2_frontend_src_components_ui_quickviewmodal_jsx",
+      "target": "quickviewmodal_quickviewmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\components\\ui\\StarRating.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_components_ui_starrating_js",
+      "_tgt": "starrating_starrating",
+      "source": "e_aurelia_v2_frontend_src_components_ui_starrating_js",
+      "target": "starrating_starrating",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AboutPage.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_aboutpage_js",
+      "_tgt": "aboutpage_aboutpage",
+      "source": "e_aurelia_v2_frontend_src_pages_aboutpage_js",
+      "target": "aboutpage_aboutpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AdminLoginPage.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_adminloginpage_js",
+      "_tgt": "adminloginpage_adminloginpage",
+      "source": "e_aurelia_v2_frontend_src_pages_adminloginpage_js",
+      "target": "adminloginpage_adminloginpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\AdminPage.js",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_adminpage_js",
+      "_tgt": "adminpage_adminpage",
+      "source": "e_aurelia_v2_frontend_src_pages_adminpage_js",
+      "target": "adminpage_adminpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\CartPage.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_cartpage_js",
+      "_tgt": "cartpage_cartpage",
+      "source": "e_aurelia_v2_frontend_src_pages_cartpage_js",
+      "target": "cartpage_cartpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\CheckoutPage.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_checkoutpage_js",
+      "_tgt": "checkoutpage_checkoutpage",
+      "source": "e_aurelia_v2_frontend_src_pages_checkoutpage_js",
+      "target": "checkoutpage_checkoutpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\HomePage.js",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_homepage_js",
+      "_tgt": "homepage_homepage",
+      "source": "e_aurelia_v2_frontend_src_pages_homepage_js",
+      "target": "homepage_homepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\LoginPage.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_loginpage_js",
+      "_tgt": "loginpage_loginpage",
+      "source": "e_aurelia_v2_frontend_src_pages_loginpage_js",
+      "target": "loginpage_loginpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\OAuthSuccess.js",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_oauthsuccess_js",
+      "_tgt": "oauthsuccess_oauthsuccess",
+      "source": "e_aurelia_v2_frontend_src_pages_oauthsuccess_js",
+      "target": "oauthsuccess_oauthsuccess",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\OrdersPage.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_orderspage_js",
+      "_tgt": "orderspage_orderspage",
+      "source": "e_aurelia_v2_frontend_src_pages_orderspage_js",
+      "target": "orderspage_orderspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ProductDetailPage.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_productdetailpage_js",
+      "_tgt": "productdetailpage_productdetailpage",
+      "source": "e_aurelia_v2_frontend_src_pages_productdetailpage_js",
+      "target": "productdetailpage_productdetailpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ProfilePage.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_profilepage_js",
+      "_tgt": "profilepage_profilepage",
+      "source": "e_aurelia_v2_frontend_src_pages_profilepage_js",
+      "target": "profilepage_profilepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\RegisterPage.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_registerpage_js",
+      "_tgt": "registerpage_registerpage",
+      "source": "e_aurelia_v2_frontend_src_pages_registerpage_js",
+      "target": "registerpage_registerpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\ShopPage.js",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_shoppage_js",
+      "_tgt": "shoppage_shoppage",
+      "source": "e_aurelia_v2_frontend_src_pages_shoppage_js",
+      "target": "shoppage_shoppage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\pages\\WishlistPage.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_pages_wishlistpage_js",
+      "_tgt": "wishlistpage_wishlistpage",
+      "source": "e_aurelia_v2_frontend_src_pages_wishlistpage_js",
+      "target": "wishlistpage_wishlistpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\cartSlice.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_slices_cartslice_js",
+      "_tgt": "cartslice_geth",
+      "source": "e_aurelia_v2_frontend_src_slices_cartslice_js",
+      "target": "cartslice_geth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\productSlice.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_slices_productslice_js",
+      "_tgt": "productslice_geth",
+      "source": "e_aurelia_v2_frontend_src_slices_productslice_js",
+      "target": "productslice_geth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\themeSlice.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_slices_themeslice_js",
+      "_tgt": "themeslice_getinitialtheme",
+      "source": "e_aurelia_v2_frontend_src_slices_themeslice_js",
+      "target": "themeslice_getinitialtheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\aurelia-v2\\frontend\\src\\slices\\wishlistSlice.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "e_aurelia_v2_frontend_src_slices_wishlistslice_js",
+      "_tgt": "wishlistslice_geth",
+      "source": "e_aurelia_v2_frontend_src_slices_wishlistslice_js",
+      "target": "wishlistslice_geth",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

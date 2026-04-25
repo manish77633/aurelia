@@ -24,14 +24,28 @@ const validatePassword = (password) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Validate required fields
-  if (!name || !email || !password) {
+  // Validate each required field individually (catches null, undefined, "", "   ")
+  if (!name || !name.toString().trim()) {
     res.status(400);
-    throw new Error('Please provide name, email and password');
+    throw new Error('Name is required');
+  }
+  if (!email || !email.toString().trim()) {
+    res.status(400);
+    throw new Error('Email is required');
+  }
+  if (!password || !password.toString().trim()) {
+    res.status(400);
+    throw new Error('Password is required');
+  }
+
+  // Validate name length
+  if (name.trim().length < 2 || name.trim().length > 50) {
+    res.status(400);
+    throw new Error('Name must be between 2 and 50 characters');
   }
 
   // Validate email format
-  if (!validateEmail(email)) {
+  if (!validateEmail(email.trim())) {
     res.status(400);
     throw new Error('Please provide a valid email address');
   }
@@ -42,12 +56,12 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number');
   }
 
-  const userExists = await User.findOne({ email: email.toLowerCase() });
+  const userExists = await User.findOne({ email: email.trim().toLowerCase() });
   if (userExists) {
     res.status(400);
     throw new Error('User already exists');
   }
-  const user = await User.create({ name, email: email.toLowerCase(), password });
+  const user = await User.create({ name: name.trim(), email: email.trim().toLowerCase(), password });
   res.status(201).json({
     _id: user._id,
     name: user.name,
@@ -63,19 +77,23 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Validate required fields
-  if (!email || !password) {
+  // Validate each required field individually (catches null, undefined, "", "   ")
+  if (!email || !email.toString().trim()) {
     res.status(400);
-    throw new Error('Please provide email and password');
+    throw new Error('Email is required');
+  }
+  if (!password || !password.toString().trim()) {
+    res.status(400);
+    throw new Error('Password is required');
   }
 
   // Validate email format
-  if (!validateEmail(email)) {
+  if (!validateEmail(email.trim())) {
     res.status(400);
     throw new Error('Please provide a valid email address');
   }
 
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const user = await User.findOne({ email: email.trim().toLowerCase() });
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
@@ -112,29 +130,76 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @desc  Update profile
 // @route PUT /api/auth/profile
 const updateUserProfile = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Validate name if provided
+  if (name !== undefined) {
+    if (typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 50) {
+      res.status(400);
+      throw new Error('Name must be between 2 and 50 characters');
+    }
+  }
+
+  // Validate email if provided
+  if (email !== undefined) {
+    if (!validateEmail(email)) {
+      res.status(400);
+      throw new Error('Please provide a valid email address');
+    }
+    // Check email not already taken by another user
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing && existing._id.toString() !== req.user._id.toString()) {
+      res.status(400);
+      throw new Error('Email is already in use by another account');
+    }
+  }
+
+  // Validate new password if provided
+  if (password !== undefined) {
+    if (!validatePassword(password)) {
+      res.status(400);
+      throw new Error('Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number');
+    }
+  }
+
   const user = await User.findById(req.user._id);
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    if (req.body.password) user.password = req.body.password;
-    const updated = await user.save();
-    res.json({
-      _id: updated._id,
-      name: updated.name,
-      email: updated.email,
-      role: updated.role,
-      token: generateToken(updated._id),
-    });
-  } else {
+  if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
+
+  if (name !== undefined) user.name = name.trim();
+  if (email !== undefined) user.email = email.toLowerCase();
+  if (password !== undefined) user.password = password;
+
+  const updated = await user.save();
+  res.json({
+    _id: updated._id,
+    name: updated.name,
+    email: updated.email,
+    role: updated.role,
+    token: generateToken(updated._id),
+  });
 });
 
 // @desc  Forgot password
 // @route POST /api/auth/forgot-password
 const forgotPassword = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
+  const { email } = req.body;
+
+  // Validate required field (catches null, undefined, "", "   ")
+  if (!email || !email.toString().trim()) {
+    res.status(400);
+    throw new Error('Email is required');
+  }
+
+  // Validate email format
+  if (!validateEmail(email.trim())) {
+    res.status(400);
+    throw new Error('Please provide a valid email address');
+  }
+
+  const user = await User.findOne({ email: email.toLowerCase() });
   if (!user) {
     res.status(404);
     throw new Error('No user found with this email');
@@ -161,6 +226,24 @@ const forgotPassword = asyncHandler(async (req, res) => {
 // @desc  Reset password
 // @route PUT /api/auth/reset-password/:token
 const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+
+  // Validate token param
+  if (!req.params.token || req.params.token.trim().length === 0) {
+    res.status(400);
+    throw new Error('Reset token is required');
+  }
+
+  // Validate new password
+  if (!password) {
+    res.status(400);
+    throw new Error('Please provide a new password');
+  }
+  if (!validatePassword(password)) {
+    res.status(400);
+    throw new Error('Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number');
+  }
+
   const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
   const user = await User.findOne({
     resetPasswordToken,
@@ -170,7 +253,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Invalid or expired token');
   }
-  user.password = req.body.password;
+  user.password = password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
   await user.save();

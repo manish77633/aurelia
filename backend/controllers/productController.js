@@ -2,6 +2,10 @@ const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
 const { cloudinary } = require('../middleware/uploadMiddleware');
 const streamifier = require('streamifier');
+const mongoose = require('mongoose');
+
+const VALID_CATEGORIES = ['Footwear', 'Apparel', 'Accessories', 'Watches', 'Bags'];
+const VALID_GENDERS = ['Men', 'Women', 'Unisex'];
 
 const streamUpload = (buffer) => {
   return new Promise((resolve, reject) => {
@@ -18,13 +22,46 @@ const streamUpload = (buffer) => {
     streamifier.createReadStream(buffer).pipe(stream);
   });
 };
+
 const getProducts = asyncHandler(async (req, res) => {
   const { keyword, category, color, minPrice, maxPrice, sort, featured, gender, subCategory, page = 1, limit = 12 } = req.query;
+
+  // Validate pagination params
+  const parsedPage = Number(page);
+  const parsedLimit = Number(limit);
+  if (!Number.isInteger(parsedPage) || parsedPage < 1) {
+    res.status(400);
+    throw new Error('Page must be a positive integer');
+  }
+  if (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 100) {
+    res.status(400);
+    throw new Error('Limit must be between 1 and 100');
+  }
+
+  // Validate price range
+  if (minPrice !== undefined && (isNaN(Number(minPrice)) || Number(minPrice) < 0)) {
+    res.status(400);
+    throw new Error('minPrice must be a non-negative number');
+  }
+  if (maxPrice !== undefined && (isNaN(Number(maxPrice)) || Number(maxPrice) < 0)) {
+    res.status(400);
+    throw new Error('maxPrice must be a non-negative number');
+  }
+  if (minPrice !== undefined && maxPrice !== undefined && Number(minPrice) > Number(maxPrice)) {
+    res.status(400);
+    throw new Error('minPrice cannot be greater than maxPrice');
+  }
+
+  // Validate gender filter
+  if (gender && !VALID_GENDERS.includes(gender)) {
+    res.status(400);
+    throw new Error(`Gender must be one of: ${VALID_GENDERS.join(', ')}`);
+  }
+
   const query = {};
   if (keyword) {
     const k = keyword.trim().toLowerCase();
 
-    // Broad Category Aliases: only if search is a single broad word
     const broadFootwear = ['shoe', 'shoes', 'footwear'].includes(k);
     const broadApparel = ['shirt', 'tshirt', 't-shirt', 'apparel', 'clothing'].includes(k);
     const broadAccessory = ['bag', 'bags', 'watch', 'watches', 'accessory', 'accessories'].includes(k);
@@ -36,7 +73,6 @@ const getProducts = asyncHandler(async (req, res) => {
     } else if (broadAccessory) {
       query.category = 'Accessories';
     } else {
-      // Advanced Search: match any word in name, category, or subCategory
       const words = k.split(' ').filter(w => w.length > 1);
       const searchRegex = words.map(w => ({
         $or: [
@@ -55,21 +91,15 @@ const getProducts = asyncHandler(async (req, res) => {
     }
   }
 
-  // Handle Category (Match exactly if present and not 'All')
   if (category && category !== 'All') {
     query.category = { $regex: new RegExp(`^${category}$`, 'i') };
   }
-
-  // Handle Gender (Strict matching)
   if (gender) {
     query.gender = gender;
   }
-
-  // Handle Sub-category (Strict matching)
   if (subCategory) {
     query.subCategory = subCategory;
   }
-
   if (color && color !== 'All') query.colors = { $in: [new RegExp(color, 'i')] };
   if (minPrice || maxPrice) {
     query.price = {};
@@ -83,20 +113,24 @@ const getProducts = asyncHandler(async (req, res) => {
   if (sort === 'price_desc') sortOption = { price: -1 };
   if (sort === 'top_rated') sortOption = { rating: -1 };
 
-  const skip = (Number(page) - 1) * Number(limit);
-  const products = await Product.find(query).sort(sortOption).skip(skip).limit(Number(limit));
+  const skip = (parsedPage - 1) * parsedLimit;
+  const products = await Product.find(query).sort(sortOption).skip(skip).limit(parsedLimit);
   const total = await Product.countDocuments(query);
 
   res.json({
     products,
-    page: Number(page),
-    pages: Math.ceil(total / Number(limit)),
+    page: parsedPage,
+    pages: Math.ceil(total / parsedLimit),
     total,
   });
 });
 
 // GET /api/products/:id
 const getProductById = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid product ID format');
+  }
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
   res.json(product);
@@ -104,6 +138,10 @@ const getProductById = asyncHandler(async (req, res) => {
 
 // GET /api/products/:id/related
 const getRelatedProducts = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid product ID format');
+  }
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
 
@@ -116,14 +154,54 @@ const getRelatedProducts = asyncHandler(async (req, res) => {
   res.json(related);
 });
 
-// POST /api/products  (admin — supports URL or file upload, multiple images)
+// POST /api/products  (admin)
 const createProduct = asyncHandler(async (req, res) => {
-  let { name, description, price, category, colors, countInStock, featured, image, imageUrls, mainImageIndex } = req.body;
+  let { name, description, price, category, colors, countInStock, featured, image, imageUrls, mainImageIndex, gender, subCategory } = req.body;
+
+  // Validate required fields
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    res.status(400);
+    throw new Error('Product name is required');
+  }
+  if (name.trim().length > 100) {
+    res.status(400);
+    throw new Error('Product name cannot exceed 100 characters');
+  }
+  if (!description || typeof description !== 'string' || description.trim() === '') {
+    res.status(400);
+    throw new Error('Product description is required');
+  }
+  if (!price && price !== 0) {
+    res.status(400);
+    throw new Error('Product price is required');
+  }
+  if (isNaN(Number(price)) || Number(price) < 0) {
+    res.status(400);
+    throw new Error('Price must be a non-negative number');
+  }
+  if (!category || typeof category !== 'string' || category.trim() === '') {
+    res.status(400);
+    throw new Error('Product category is required');
+  }
+
+  // Validate gender if provided
+  if (gender && !VALID_GENDERS.includes(gender)) {
+    res.status(400);
+    throw new Error(`Gender must be one of: ${VALID_GENDERS.join(', ')}`);
+  }
+
+  // Validate countInStock
+  if (countInStock !== undefined) {
+    const stock = Number(countInStock);
+    if (!Number.isInteger(stock) || stock < 0) {
+      res.status(400);
+      throw new Error('Stock count must be a non-negative integer');
+    }
+  }
 
   // Build images array from uploaded files + any URL-based images
   let allImages = [];
 
-  // Uploaded files via Cloudinary streamifier
   if (req.files && req.files.length > 0) {
     for (const file of req.files) {
       const url = await streamUpload(file.buffer);
@@ -131,35 +209,33 @@ const createProduct = asyncHandler(async (req, res) => {
     }
   }
 
-  // URL-based images (sent as JSON array string or comma-separated)
   if (imageUrls) {
     try {
       const urls = JSON.parse(imageUrls);
       if (Array.isArray(urls)) allImages = allImages.concat(urls);
     } catch {
-      // comma-separated fallback
       allImages = allImages.concat(imageUrls.split(',').map(u => u.trim()).filter(Boolean));
     }
   }
 
-  // Legacy single image field fallback
   if (allImages.length === 0 && image) {
     allImages.push(image);
   }
 
   if (allImages.length === 0) { res.status(400); throw new Error('At least one product image is required'); }
 
-  // Determine main image
   const mainIdx = Number(mainImageIndex) || 0;
   const mainImage = allImages[mainIdx] || allImages[0];
 
-  const colorsArray = typeof colors === 'string' ? colors.split(',').map(c => c.trim()) : colors || [];
+  const colorsArray = typeof colors === 'string' ? colors.split(',').map(c => c.trim()).filter(Boolean) : (Array.isArray(colors) ? colors : []);
 
   const product = await Product.create({
-    name, description, price: Number(price), category,
+    name: name.trim(), description: description.trim(), price: Number(price), category: category.trim(),
     colors: colorsArray, image: mainImage, images: allImages,
     countInStock: Number(countInStock) || 10,
     featured: featured === 'true' || featured === true,
+    gender: gender || 'Unisex',
+    subCategory: subCategory || undefined,
     seller: req.user._id,
   });
   res.status(201).json(product);
@@ -167,15 +243,46 @@ const createProduct = asyncHandler(async (req, res) => {
 
 // PUT /api/products/:id  (admin)
 const updateProduct = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid product ID format');
+  }
+
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
 
-  let { name, description, price, category, colors, countInStock, featured, image, imageUrls, mainImageIndex, existingImages } = req.body;
+  let { name, description, price, category, colors, countInStock, featured, image, imageUrls, mainImageIndex, existingImages, gender, subCategory } = req.body;
+
+  // Validate fields if provided
+  if (name !== undefined) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      res.status(400); throw new Error('Product name cannot be empty');
+    }
+    if (name.trim().length > 100) {
+      res.status(400); throw new Error('Product name cannot exceed 100 characters');
+    }
+  }
+  if (description !== undefined && (typeof description !== 'string' || description.trim() === '')) {
+    res.status(400); throw new Error('Product description cannot be empty');
+  }
+  if (price !== undefined) {
+    if (isNaN(Number(price)) || Number(price) < 0) {
+      res.status(400); throw new Error('Price must be a non-negative number');
+    }
+  }
+  if (countInStock !== undefined) {
+    const stock = Number(countInStock);
+    if (!Number.isInteger(stock) || stock < 0) {
+      res.status(400); throw new Error('Stock count must be a non-negative integer');
+    }
+  }
+  if (gender !== undefined && !VALID_GENDERS.includes(gender)) {
+    res.status(400); throw new Error(`Gender must be one of: ${VALID_GENDERS.join(', ')}`);
+  }
 
   // Build images array
   let allImages = [];
 
-  // Keep existing images if provided (sent as JSON array string)
   if (existingImages) {
     try {
       const kept = JSON.parse(existingImages);
@@ -183,7 +290,6 @@ const updateProduct = asyncHandler(async (req, res) => {
     } catch { }
   }
 
-  // Add newly uploaded files via Cloudinary
   if (req.files && req.files.length > 0) {
     for (const file of req.files) {
       const url = await streamUpload(file.buffer);
@@ -191,7 +297,6 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   }
 
-  // Add URL-based images
   if (imageUrls) {
     try {
       const urls = JSON.parse(imageUrls);
@@ -201,31 +306,32 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   }
 
-  // Legacy single image field fallback
   if (allImages.length === 0 && image) {
     allImages.push(image);
   }
 
-  // If still no images, keep existing
   if (allImages.length === 0) {
     allImages = product.images && product.images.length > 0 ? product.images : [product.image];
   }
 
-  // Determine main image
   const mainIdx = Number(mainImageIndex) || 0;
   const mainImage = allImages[mainIdx] || allImages[0];
 
-  const colorsArray = typeof colors === 'string' ? colors.split(',').map(c => c.trim()) : colors || product.colors;
+  const colorsArray = typeof colors === 'string'
+    ? colors.split(',').map(c => c.trim()).filter(Boolean)
+    : (Array.isArray(colors) ? colors : product.colors);
 
-  product.name = name ?? product.name;
-  product.description = description ?? product.description;
-  product.price = price ? Number(price) : product.price;
-  product.category = category ?? product.category;
+  product.name = name !== undefined ? name.trim() : product.name;
+  product.description = description !== undefined ? description.trim() : product.description;
+  product.price = price !== undefined ? Number(price) : product.price;
+  product.category = category !== undefined ? category.trim() : product.category;
   product.colors = colorsArray;
   product.image = mainImage;
   product.images = allImages;
-  product.countInStock = countInStock ? Number(countInStock) : product.countInStock;
+  product.countInStock = countInStock !== undefined ? Number(countInStock) : product.countInStock;
   product.featured = featured !== undefined ? (featured === 'true' || featured === true) : product.featured;
+  product.gender = gender !== undefined ? gender : product.gender;
+  product.subCategory = subCategory !== undefined ? subCategory : product.subCategory;
 
   const updated = await product.save();
   res.json(updated);
@@ -233,6 +339,10 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 // DELETE /api/products/:id  (admin)
 const deleteProduct = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid product ID format');
+  }
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
   await product.deleteOne();
@@ -241,12 +351,39 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 // POST /api/products/:id/reviews
 const createProductReview = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid product ID format');
+  }
+
   const { rating, comment } = req.body;
+
+  // Validate rating
+  if (rating === undefined || rating === null || rating === '') {
+    res.status(400);
+    throw new Error('Rating is required');
+  }
+  const parsedRating = Number(rating);
+  if (isNaN(parsedRating) || !Number.isInteger(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+    res.status(400);
+    throw new Error('Rating must be an integer between 1 and 5');
+  }
+
+  // Validate comment
+  if (!comment || typeof comment !== 'string' || comment.trim() === '') {
+    res.status(400);
+    throw new Error('Review comment is required');
+  }
+  if (comment.trim().length > 1000) {
+    res.status(400);
+    throw new Error('Review comment cannot exceed 1000 characters');
+  }
+
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
   const alreadyReviewed = product.reviews.find(r => r.user.toString() === req.user._id.toString());
-  if (alreadyReviewed) { res.status(400); throw new Error('Already reviewed'); }
-  product.reviews.push({ user: req.user._id, name: req.user.name, rating: Number(rating), comment });
+  if (alreadyReviewed) { res.status(400); throw new Error('You have already reviewed this product'); }
+  product.reviews.push({ user: req.user._id, name: req.user.name, rating: parsedRating, comment: comment.trim() });
   product.numReviews = product.reviews.length;
   product.rating = product.reviews.reduce((a, r) => a + r.rating, 0) / product.reviews.length;
   await product.save();

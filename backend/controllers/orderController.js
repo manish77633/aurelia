@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Order = require('../models/orderModel');
 const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 // Email transporter
 const getTransporter = () => nodemailer.createTransport({
@@ -15,6 +17,23 @@ const STATUS_EMAIL = {
   'Out for Delivery': { emoji: '🚚', subject: 'Out for Delivery!', msg: 'Your order is out for delivery. It will reach you soon!' },
   'Delivered': { emoji: '🎉', subject: 'Order Delivered!', msg: 'Your order has been delivered. We hope you love it!' },
   'Cancelled': { emoji: '❌', subject: 'Order Cancelled', msg: 'Your order has been cancelled. If you have questions, please contact support.' },
+};
+
+const VALID_STATUSES = ['Pending', 'Processing', 'Confirmed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
+const VALID_PAYMENT_METHODS = ['Razorpay', 'COD'];
+
+const isValidRazorpaySignature = ({ razorpay_order_id, razorpay_payment_id, razorpay_signature }) => {
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !process.env.RAZORPAY_KEY_SECRET) {
+    return false;
+  }
+
+  const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+  const expectedSignature = crypto
+    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    .update(body)
+    .digest('hex');
+
+  return expectedSignature === razorpay_signature;
 };
 
 const sendStatusEmail = async (order, status) => {
@@ -70,20 +89,100 @@ const sendStatusEmail = async (order, status) => {
 // @route POST /api/orders
 const createOrder = asyncHandler(async (req, res) => {
   const { orderItems, shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice, paymentResult } = req.body;
-  if (!orderItems || orderItems.length === 0) {
+
+  // Validate orderItems
+  if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
     res.status(400);
-    throw new Error('No order items');
+    throw new Error('Order must contain at least one item');
+  }
+
+  // Validate each order item
+  for (let i = 0; i < orderItems.length; i++) {
+    const item = orderItems[i];
+    if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') {
+      res.status(400);
+      throw new Error(`Order item ${i + 1}: name is required`);
+    }
+    if (!item.product || !mongoose.Types.ObjectId.isValid(item.product)) {
+      res.status(400);
+      throw new Error(`Order item ${i + 1}: valid product ID is required`);
+    }
+    if (!item.qty || !Number.isInteger(Number(item.qty)) || Number(item.qty) < 1) {
+      res.status(400);
+      throw new Error(`Order item ${i + 1}: quantity must be a positive integer`);
+    }
+    if (item.price === undefined || item.price === null || Number(item.price) < 0) {
+      res.status(400);
+      throw new Error(`Order item ${i + 1}: valid price is required`);
+    }
+    if (!item.image || typeof item.image !== 'string' || item.image.trim() === '') {
+      res.status(400);
+      throw new Error(`Order item ${i + 1}: image URL is required`);
+    }
+  }
+
+  // Validate shippingAddress
+  if (!shippingAddress || typeof shippingAddress !== 'object') {
+    res.status(400);
+    throw new Error('Shipping address is required');
+  }
+  if (!shippingAddress.address || shippingAddress.address.trim() === '') {
+    res.status(400);
+    throw new Error('Shipping address line is required');
+  }
+  if (!shippingAddress.city || shippingAddress.city.trim() === '') {
+    res.status(400);
+    throw new Error('Shipping city is required');
+  }
+  if (!shippingAddress.postalCode || shippingAddress.postalCode.trim() === '') {
+    res.status(400);
+    throw new Error('Shipping postal code is required');
+  }
+  if (!shippingAddress.country || shippingAddress.country.trim() === '') {
+    res.status(400);
+    throw new Error('Shipping country is required');
+  }
+
+  // Validate paymentMethod
+  if (!paymentMethod) {
+    res.status(400);
+    throw new Error('Payment method is required');
+  }
+  if (!VALID_PAYMENT_METHODS.includes(paymentMethod)) {
+    res.status(400);
+    throw new Error(`Payment method must be one of: ${VALID_PAYMENT_METHODS.join(', ')}`);
+  }
+  if (paymentMethod === 'Razorpay' && !isValidRazorpaySignature(paymentResult || {})) {
+    res.status(400);
+    throw new Error('Invalid Razorpay payment signature');
+  }
+
+  // Validate prices
+  if (totalPrice === undefined || totalPrice === null || Number(totalPrice) < 0) {
+    res.status(400);
+    throw new Error('Valid total price is required');
+  }
+  if (itemsPrice !== undefined && Number(itemsPrice) < 0) {
+    res.status(400);
+    throw new Error('Items price cannot be negative');
+  }
+  if (shippingPrice !== undefined && Number(shippingPrice) < 0) {
+    res.status(400);
+    throw new Error('Shipping price cannot be negative');
+  }
+  if (taxPrice !== undefined && Number(taxPrice) < 0) {
+    res.status(400);
+    throw new Error('Tax price cannot be negative');
   }
 
   const order = await Order.create({
     user: req.user._id,
     orderItems, shippingAddress, paymentMethod,
     itemsPrice, shippingPrice, taxPrice, totalPrice,
-    // For Razorpay paid orders
-    isPaid: paymentResult?.status === 'paid',
-    paidAt: paymentResult?.status === 'paid' ? Date.now() : undefined,
+    isPaid: paymentMethod === 'Razorpay',
+    paidAt: paymentMethod === 'Razorpay' ? Date.now() : undefined,
     paymentResult: paymentResult || undefined,
-    status: paymentMethod === 'COD' ? 'Processing' : (paymentResult?.status === 'paid' ? 'Processing' : 'Pending'),
+    status: 'Processing',
   });
   res.status(201).json(order);
 });
@@ -91,6 +190,12 @@ const createOrder = asyncHandler(async (req, res) => {
 // @desc  Get order by ID
 // @route GET /api/orders/:id
 const getOrderById = asyncHandler(async (req, res) => {
+  // Validate ID format
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid order ID format');
+  }
+
   const order = await Order.findById(req.params.id).populate('user', 'name email');
   if (!order) {
     res.status(404);
@@ -98,7 +203,7 @@ const getOrderById = asyncHandler(async (req, res) => {
   }
   if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
     res.status(403);
-    throw new Error('Not authorized');
+    throw new Error('Not authorized to view this order');
   }
   res.json(order);
 });
@@ -113,20 +218,46 @@ const getMyOrders = asyncHandler(async (req, res) => {
 // @desc  Mark order as paid
 // @route PUT /api/orders/:id/pay
 const updateOrderToPaid = asyncHandler(async (req, res) => {
+  // Validate ID format
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid order ID format');
+  }
+
+  // Validate required payment fields
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    res.status(400);
+    throw new Error('Razorpay order ID, payment ID and signature are required');
+  }
+
   const order = await Order.findById(req.params.id);
   if (!order) {
     res.status(404);
     throw new Error('Order not found');
   }
+  if (order.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    res.status(403);
+    throw new Error('Not authorized to update this order');
+  }
+  if (order.isPaid) {
+    res.status(400);
+    throw new Error('Order is already marked as paid');
+  }
+  if (!isValidRazorpaySignature({ razorpay_order_id, razorpay_payment_id, razorpay_signature })) {
+    res.status(400);
+    throw new Error('Invalid Razorpay payment signature');
+  }
+
   order.isPaid = true;
   order.paidAt = Date.now();
   order.status = 'Processing';
   order.paymentResult = {
     id: req.body.id,
     status: req.body.status,
-    razorpay_order_id: req.body.razorpay_order_id,
-    razorpay_payment_id: req.body.razorpay_payment_id,
-    razorpay_signature: req.body.razorpay_signature,
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
   };
   const updated = await order.save();
   res.json(updated);
@@ -142,17 +273,40 @@ const getAllOrders = asyncHandler(async (req, res) => {
 // @desc  Update order status (admin) + send email notification
 // @route PUT /api/orders/:id/status
 const updateOrderStatus = asyncHandler(async (req, res) => {
+  // Validate ID format
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid order ID format');
+  }
+
+  const { status } = req.body;
+
+  // Validate status field
+  if (!status) {
+    res.status(400);
+    throw new Error('Status is required');
+  }
+  if (!VALID_STATUSES.includes(status)) {
+    res.status(400);
+    throw new Error(`Status must be one of: ${VALID_STATUSES.join(', ')}`);
+  }
+
   const order = await Order.findById(req.params.id).populate('user', 'name email');
   if (!order) {
     res.status(404);
     throw new Error('Order not found');
   }
 
-  const newStatus = req.body.status;
-  order.status = newStatus;
+  // Prevent updating a cancelled order
+  if (order.status === 'Cancelled' && status !== 'Cancelled') {
+    res.status(400);
+    throw new Error('Cannot update status of a cancelled order');
+  }
+
+  order.status = status;
 
   // Mark as delivered
-  if (newStatus === 'Delivered') {
+  if (status === 'Delivered') {
     order.isDelivered = true;
     order.deliveredAt = Date.now();
     // For COD orders, mark as paid on delivery
@@ -162,18 +316,12 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     }
   }
 
-  // For COD, mark confirmed means accepted
-  if (newStatus === 'Confirmed' && order.paymentMethod === 'COD') {
-    // COD orders marked paid only on delivery, but confirmed means accepted
-  }
-
   const updated = await order.save();
 
   // Send email notification
-  await sendStatusEmail(order, newStatus);
+  await sendStatusEmail(order, status);
 
   res.json(updated);
 });
 
 module.exports = { createOrder, getOrderById, getMyOrders, updateOrderToPaid, getAllOrders, updateOrderStatus };
-

@@ -2,6 +2,9 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
+const mongoose = require('mongoose');
+
+const VALID_ROLES = ['user', 'admin'];
 
 // @desc  Get dashboard stats
 // @route GET /api/admin/stats
@@ -59,6 +62,18 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @desc  Delete user (admin)
 // @route DELETE /api/admin/users/:id
 const deleteUser = asyncHandler(async (req, res) => {
+  // Validate ID format
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid user ID format');
+  }
+
+  // Prevent admin from deleting themselves
+  if (req.params.id === req.user._id.toString()) {
+    res.status(400);
+    throw new Error('You cannot delete your own account');
+  }
+
   const user = await User.findById(req.params.id);
   if (!user) {
     res.status(404);
@@ -66,7 +81,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
   if (user.role === 'admin') {
     res.status(400);
-    throw new Error('Cannot delete admin user');
+    throw new Error('Cannot delete an admin user');
   }
   await user.deleteOne();
   res.json({ message: 'User removed' });
@@ -75,12 +90,36 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @desc  Update user role (admin)
 // @route PUT /api/admin/users/:id
 const updateUserRole = asyncHandler(async (req, res) => {
+  // Validate ID format
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error('Invalid user ID format');
+  }
+
+  const { role } = req.body;
+
+  // Validate role
+  if (!role) {
+    res.status(400);
+    throw new Error('Role is required');
+  }
+  if (!VALID_ROLES.includes(role)) {
+    res.status(400);
+    throw new Error(`Role must be one of: ${VALID_ROLES.join(', ')}`);
+  }
+
+  // Prevent admin from changing their own role
+  if (req.params.id === req.user._id.toString()) {
+    res.status(400);
+    throw new Error('You cannot change your own role');
+  }
+
   const user = await User.findById(req.params.id);
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
-  user.role = req.body.role || user.role;
+  user.role = role;
   const updated = await user.save();
   res.json({ _id: updated._id, name: updated.name, email: updated.email, role: updated.role });
 });

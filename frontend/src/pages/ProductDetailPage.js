@@ -221,8 +221,8 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-3">
             {product.reviews?.map((r, i) => (
               <div key={i} className="bg-white rounded-2xl px-5 md:px-6 py-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <div className="flex justify-between items-start mb-1.5">
                   <span className="font-bold text-charcoal text-[0.92rem]">{r.name}</span>
+                <div className="flex justify-between items-start mb-1.5">
                   <span className="text-[0.8rem] text-gray-400">{new Date(r.createdAt).toLocaleDateString()}</span>
                 </div>
                 <div className="flex gap-0.5 mb-2">
